@@ -1,0 +1,10 @@
+{
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": false,
+    "files.associations": {
+        "*.spec": "python",
+        "memory": "cpp",
+        "system_error": "cpp",
+        "xutility": "cpp"
+    }
+}
