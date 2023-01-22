@@ -89,6 +89,11 @@ public:
 
 private:
     vector<T> Vertices;
+
+    int prob()
+    {
+        return 1;
+    }
 };
 
 template <class T>
@@ -102,28 +107,38 @@ class PriorityQueue
     ~PriorityQueue(){};
 
 public:
-    bool chgPrioirity(int priority){
+    bool chgPrioirity(int priority)
+    {
         // changes the priority (node value) of queue element.
+        return false;
     };
 
-    bool minPrioirty(){
+    bool minPrioirty()
+    {
         // removes the top element of the queue.
+        return false;
     };
 
-    bool contains(const T &queue_element){
+    bool contains(const T &queue_element)
+    {
         // does the queue contain queue_element.
+        return false;
     };
 
-    bool Insert(const T &queue_element){
+    bool Insert(const T &queue_element)
+    {
         // insert queue_element into queue
+        return false;
     };
 
     T top(){
         // returns the top element of the queue.
     };
 
-    int size(){
+    int size()
+    {
         // return the number of queue_elements.
+        return 0;
     };
 };
 
@@ -139,23 +154,27 @@ class ShortestPath
     };
 
 public:
-    vector<T, T> vertices(){
+    vector<T, T> vertices()
+    {
         // list of vertices in G(V,E).
+        return vector<T, T>(0);
     };
 
-    vector<T> path(const T &u, const T &w){
+    vector<T> path(const T &u, const T &w)
+    {
         // find shortest path between u-w and
         // returns the sequence of vertices representing shorest path u-v1-v2-…-vn-w.
+        return NULL;
     };
 
-    int path_size(const T &u, const T &w){
+    int path_size(const T &u, const T &w)
+    {
         // return the path cost associated with the shortest path.
+        return 0;
     };
 
 private:
     Graph<T> graph;
 };
 
-int main()
-{
-}
+int main() { ; }
