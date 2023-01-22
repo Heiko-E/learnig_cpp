@@ -177,4 +177,7 @@ private:
     Graph<T> graph;
 };
 
-int main() { ; }
+int main()
+{
+    return 0;
+}
