@@ -6,5 +6,9 @@
         "memory": "cpp",
         "system_error": "cpp",
         "xutility": "cpp"
-    }
+    },
+    "cmake.mingwSearchDirs": [
+        "C:mingw64\\bin"
+    ],
+    "cmake.generator": "MinGW Makefiles"
 }

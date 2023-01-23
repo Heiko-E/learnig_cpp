@@ -20,26 +20,6 @@
                 "kind": "build",
                 "isDefault": true
             },
-        },
-        {
-            "type": "shell",
-            "label": "Win cmake",
-            "command": "cmake",
-            "args": [
-                "${workspaceRoot}",
-                "-G",
-                "\"MinGW Makefiles\""
-            ],
-            "options": {
-                "cwd": "${workspaceRoot}/build"
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": false
-            }
         }
     ]
 }

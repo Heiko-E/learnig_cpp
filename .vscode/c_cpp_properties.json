@@ -7,20 +7,12 @@
     },
     "configurations": [
         {
-            "name": "Linux",
+            "name": "CMake",
             "defines": [],
             "intelliSenseMode": "${default}",
             "cStandard": "c11",
             "cppStandard": "c++17",
-            "compilerPath": "/usr/bin/g++"
-        },
-        {
-            "name": "Win32",
-            "defines": [],
-            "intelliSenseMode": "${default}",
-            "cStandard": "c11",
-            "cppStandard": "c++17",
-            "compilerPath": "C:/MinGW/bin/g++.exe"
+            "configurationProvider": "ms-vscode.cmake-tools"
         }
     ]
 }
