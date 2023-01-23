@@ -12,5 +12,11 @@ Repository for c++ related experiments like:
 Install development environment:
 
     sudo apt-get update
-    sudo apt-get install build-essential gcc g++
+    sudo apt-get install build-essential gcc g++ gdb
     sudo apt-get install cmake ansible
+
+Configure CMake:
+
+<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P
+
+    Cmake: Configure
