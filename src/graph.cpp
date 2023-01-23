@@ -9,6 +9,7 @@ Abstract Data Type for a graph.
 */
 {
     Graph() : Vertices(vector<T>(0)) { ; };
+
     Graph(int size, int density) : Vertices(vector<T>(size))
     {
         vector<vector<int>> graph = vector<vector<int>>(size);
@@ -23,6 +24,7 @@ Abstract Data Type for a graph.
             }
         }
     };
+
     ~Graph()
     {
         delete this->Vertices;
@@ -98,12 +100,14 @@ private:
 
 template <class T>
 class PriorityQueue
-{
-    /*
+/*
     The value of the PriorityQueue is to always have access to the vertex
     with the next shortest link in the shortest path calculation at the top of the queue.
     */
+{
+
     PriorityQueue(){};
+
     ~PriorityQueue(){};
 
 public:
@@ -144,8 +148,9 @@ public:
 
 template <class T>
 class ShortestPath
+// implements the mechanics of Dijkstra’s algorithm
 {
-    // implements the mechanics of Dijkstra’s algorithm
+
     ShortestPath(Graph<T> g) : graph(g){};
 
     ~ShortestPath()
