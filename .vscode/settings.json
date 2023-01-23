@@ -9,6 +9,5 @@
     },
     "cmake.mingwSearchDirs": [
         "C:mingw64\\bin"
-    ],
-    "cmake.generator": "MinGW Makefiles"
+    ]
 }
