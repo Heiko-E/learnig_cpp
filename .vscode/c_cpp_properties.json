@@ -1,4 +1,5 @@
 {
+    "version": 4,
     "env": {
         "myDefaultIncludePath": [
             "${workspaceFolder}"
@@ -12,6 +13,6 @@
             "cStandard": "c11",
             "cppStandard": "c++17",
             "compilerPath": "/usr/bin/g++"
-        ],
-        "version": 4
-    }
+        }
+    ]
+}
