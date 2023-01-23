@@ -15,11 +15,19 @@ Open Powersehll and enter:
     gdb --version
     cmake --version
 
-## Setup WSL2
+## Setup Windows Subsystem for Linux 2
+
+Install a Linux distridution. E.g. [Ubuntu via windows AppStore](https://ubuntu.com/tutorials/install-ubuntu-on-wsl2-on-windows-11-with-gui-support#3-download-ubuntu)
+
+Checkout the repo to the home directory e.g. \\wsl.localhost\OSD\home\<Me>\
 
 > **HINT** for OSD6: If connection is not possible use
 
     wsl --shutdown
+
+Show Linux distributions in Windows Subsystem for Linux:
+
+     wsl --list --verbose
 
 Install development environment:
 
