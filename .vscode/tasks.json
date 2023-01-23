@@ -5,7 +5,7 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "Linux cmake",
+            "label": "CMake",
             "command": "cmake",
             "args": [
                 "${workspaceRoot}"
