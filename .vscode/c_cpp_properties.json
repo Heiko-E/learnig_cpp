@@ -1,0 +1,17 @@
+{
+    "env": {
+        "myDefaultIncludePath": [
+            "${workspaceFolder}"
+        ]
+    },
+    "configurations": [
+        {
+            "name": "Linux",
+            "defines": [],
+            "intelliSenseMode": "${default}",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "compilerPath": "/usr/bin/g++"
+        ],
+        "version": 4
+    }
