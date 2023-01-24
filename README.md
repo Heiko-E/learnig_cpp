@@ -32,7 +32,7 @@ Show Linux distributions in Windows Subsystem for Linux:
 Install development environment:
 
     sudo apt-get update
-    sudo apt-get install build-essential gcc g++ gdb
+    sudo apt-get install build-essential gcc g++ gdb clang
     sudo apt-get install cmake ansible
 
 Configure CMake:

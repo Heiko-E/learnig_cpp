@@ -8,9 +8,10 @@ class Graph
 Abstract Data Type for a graph.
 */
 {
+public:
     Graph() : Vertices(vector<T>(0)) { ; };
 
-    Graph(int size, int density) : Vertices(vector<T>(size))
+    Graph(int size, float density) : Vertices(vector<T>(size))
     {
         vector<vector<int>> graph = vector<vector<int>>(size);
         for (int i = 0; i < size; i++)
@@ -27,10 +28,10 @@ Abstract Data Type for a graph.
 
     ~Graph()
     {
-        delete this->Vertices;
+        Vertices.clear();
+        // delete[] Vertices;
     };
 
-public:
     vector<T> getVertices()
     {
         return Vertices;
@@ -89,6 +90,8 @@ public:
         return true;
     };
 
+    friend ostream &operator<<(ostream &os, const Graph<T> &graph);
+
 private:
     vector<T> Vertices;
 
@@ -99,18 +102,27 @@ private:
 };
 
 template <class T>
+ostream &operator<<(ostream &os, Graph<T> &graph)
+{
+    for (auto &&node : graph.getVertices())
+    {
+        os << node << ", ";
+    }
+    return os;
+}
+
+template <class T>
 class PriorityQueue
 /*
     The value of the PriorityQueue is to always have access to the vertex
     with the next shortest link in the shortest path calculation at the top of the queue.
     */
 {
-
+public:
     PriorityQueue(){};
 
     ~PriorityQueue(){};
 
-public:
     bool chgPrioirity(int priority)
     {
         // changes the priority (node value) of queue element.
@@ -150,7 +162,7 @@ template <class T>
 class ShortestPath
 // implements the mechanics of Dijkstra’s algorithm
 {
-
+public:
     ShortestPath(Graph<T> g) : graph(g){};
 
     ~ShortestPath()
@@ -158,7 +170,6 @@ class ShortestPath
         delete this->graph;
     };
 
-public:
     vector<T, T> vertices()
     {
         // list of vertices in G(V,E).
@@ -184,5 +195,7 @@ private:
 
 int main()
 {
+    Graph<string> testgraph(4, 0.3);
+    cout << testgraph;
     return 0;
 }
