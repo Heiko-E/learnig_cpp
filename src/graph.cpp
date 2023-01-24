@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <map>
+#include <bits/stdc++.h>
 using namespace std;
 
 template <class T>
@@ -11,13 +13,15 @@ class Graph
 public:
     Graph() : Vertices(vector<T>(0)){};
 
-    Graph(const vector<T> &vertices) : Vertices(vertices){};
-
-    Graph(const Graph<T> &graph)
+    Graph(const vector<T> &vertices) : Vertices(vertices)
     {
-        /// @brief copy constructor
-        this->Vertices = vector<T>(graph.getVertices());
+        for (T node : this->Vertices)
+        {
+            this->Edges.insert(pair<T, T>(node, vector<T>(0)));
+        }
     };
+
+    Graph(const Graph<T> &graph) : Vertices(graph.Vertices), Edges(graph.Edges){};
 
     ~Graph()
     {
@@ -67,7 +71,7 @@ public:
         /// @brief lists all nodes y such that there is an edge from x to y.
         /// @param x starting node of the edge
         /// @return all neighbors of the node
-        return vector<T>(0);
+        return vector<T>(this->Edges.at(x));
     };
 
     inline T get_node_value(int idx)
@@ -94,6 +98,11 @@ public:
         /// @param x start node of the edge
         /// @param y end node of the edge
         /// @return true if the edge was successfully added
+        vector<T> neighbors = this->Edges.at(x);
+        if (count(neighbors.begin(), neighbors.end(), y))
+        {
+            neighbors.push_back(y);
+        }
         return true;
     };
 
@@ -103,6 +112,8 @@ public:
         /// @param x start node of the edge
         /// @param y end node of the edge
         /// @return true if the edge was successfully deleted
+        vector<T> neighbors = this->Edges.at(x);
+
         return true;
     };
 
@@ -130,6 +141,7 @@ public:
 
 private:
     vector<T> Vertices;
+    map<T, vector<T>> Edges;
 };
 
 template <class T>
