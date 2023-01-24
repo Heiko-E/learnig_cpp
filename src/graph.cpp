@@ -15,7 +15,7 @@ public:
 
     Graph(const Graph<T> &graph)
     {
-        // Copy constructor
+        /// @brief copy constructor
         this->Vertices = vector<T>(graph.getVertices());
     };
 
@@ -27,17 +27,22 @@ public:
 
     inline vector<T> getVertices()
     {
+        /// @brief get all nodes of the graph
+        /// @return all node values of the graph
         return vector<T>(Vertices);
     }
 
     inline vector<T, T> getEdges()
     {
+        /// @brief get all edges of the graph as list
+        /// @return all edges in the graph
         return vector<T, T>(0);
     }
 
     inline int order()
     {
-        // get the order of the graph
+        /// @brief get the order of the graph
+        /// @return number of vertices of the graph
         return this->Vertices.size();
     };
 
@@ -47,52 +52,76 @@ public:
         /// @return density in the range [0..1]
         return 0;
     };
+
     inline bool adjacent(const T &x, const T &y)
     {
-        // tests whether there is an edge from node x to node y.
+        /// @brief tests whether there is an edge from node x to node y.
+        /// @param x start node
+        /// @param y end node of the edge
+        /// @return true if there is a edge
         return true;
     };
 
     inline vector<T> neighbors(const T &x)
     {
-        // lists all nodes y such that there is an edge from x to y.
+        /// @brief lists all nodes y such that there is an edge from x to y.
+        /// @param x starting node of the edge
+        /// @return all neighbors of the node
         return vector<T>(0);
     };
 
     inline T get_node_value(int idx)
     {
-        // returns the value associated with the node idx.
+        /// @brief returns the value associated with the node idx.
+        /// @param idx number of the node
+        /// @return value of the node
         return this->Vertices.at(idx);
     };
 
-    inline bool set_node_value(int idx, const T &a)
+    inline bool set_node_value(int idx, const T &node)
     {
-        // sets the value associated with the node idx to a.
-        this->Vertices.at(idx) = a;
+        /// @brief sets the value associated with the node idx to a.
+        /// @param idx number of the node
+        /// @param node new value of the node
+        /// @return true if the node was successfully updated
+        this->Vertices.at(idx) = node;
         return true;
     };
 
     inline bool addEdge(const T &x, const T &y)
     {
-        // adds to the graph the edge from x to y, if it is not there.
+        /// @brief adds to the graph the edge from x to y, if it is not there.
+        /// @param x start node of the edge
+        /// @param y end node of the edge
+        /// @return true if the edge was successfully added
         return true;
     };
 
     inline bool deleteEdge(const T &x, const T &y)
     {
-        // removes the edge from x to y, if it is there.
+        /// @brief removes the edge from x to y, if it is there.
+        /// @param x start node of the edge
+        /// @param y end node of the edge
+        /// @return true if the edge was successfully deleted
         return true;
     };
 
     inline int get_edge_value(const T &x, const T &y)
     {
-        // returns the value associated to the edge (x,y).
+        /// @brief returns the value associated to the edge (x,y).
+        /// @param x start node of the edge
+        /// @param y end node of the edge
+        /// @return value of the edge
         return 0;
     };
 
     inline bool set_edge_value(const T &x, const T &y, int v)
     {
-        // sets the value associated to the edge (x,y) to v.
+        /// @brief sets the value associated to the edge (x,y) to v.
+        /// @param x start node of the edge
+        /// @param y end node of the edge
+        /// @param v new value of the edge
+        /// @return true if value is succefully updated
         return true;
     };
 
@@ -106,6 +135,11 @@ private:
 template <class T>
 ostream &operator<<(ostream &os, Graph<T> &graph)
 {
+    /// @brief Output operator for Graph<T> class
+    /// @tparam T Type of the nodes of the graph
+    /// @param os output stream
+    /// @param graph the graph object to add to the output
+    /// @return output stream
     os << "Graph of order " << graph.order();
     os << " with density " << graph.density() << endl;
     os << "- Nodes:" << endl;
