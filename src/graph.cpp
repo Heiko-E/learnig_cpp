@@ -5,118 +5,123 @@ using namespace std;
 template <class T>
 class Graph
 /*
-Abstract Data Type for a graph.
-*/
+ * Abstract Data Type for a graph.
+ */
 {
 public:
-    Graph() : Vertices(vector<T>(0)) { ; };
+    Graph() : Vertices(vector<T>(0)){};
 
-    Graph(int size, float density) : Vertices(vector<T>(size))
+    Graph(const vector<T> &vertices) : Vertices(vertices){};
+
+    Graph(const Graph<T> &graph)
     {
-        vector<vector<int>> graph = vector<vector<int>>(size);
-        for (int i = 0; i < size; i++)
-        {
-            for (int j = 0; j < size; j++)
-            {
-                if (i == j)
-                    graph[i][j] = false;
-                else
-                    graph[i][j] = graph[j][i] = (prob() < density);
-            }
-        }
+        // Copy constructor
+        this->Vertices = vector<T>(graph.getVertices());
     };
 
     ~Graph()
     {
         Vertices.clear();
-        // delete[] Vertices;
+        // delete *Vertices;
     };
 
-    vector<T> getVertices()
+    inline vector<T> getVertices()
     {
-        return Vertices;
+        return vector<T>(Vertices);
     }
 
-    vector<T, T> getEdges()
+    inline vector<T, T> getEdges()
     {
         return NULL;
     }
 
-    bool adjacent(const T &x, const T &y)
+    inline int order()
+    {
+        // get the order of the graph
+        return this->Vertices.size();
+    };
+
+    float density()
+    {
+        /// @brief density of the graph
+        /// @return density in the range [0..1]
+        return 0;
+    };
+    inline bool adjacent(const T &x, const T &y)
     {
         // tests whether there is an edge from node x to node y.
         return true;
     };
 
-    vector<T> neighbors(const T &x)
+    inline vector<T> neighbors(const T &x)
     {
         // lists all nodes y such that there is an edge from x to y.
         return NULL;
     };
 
-    bool add(const T &x, const T &y)
+    inline T get_node_value(int idx)
+    {
+        // returns the value associated with the node idx.
+        return this->Vertices.at(idx);
+    };
+
+    inline bool set_node_value(int idx, const T &a)
+    {
+        // sets the value associated with the node idx to a.
+        this->Vertices.at(idx) = a;
+        return true;
+    };
+
+    inline bool addEdge(const T &x, const T &y)
     {
         // adds to the graph the edge from x to y, if it is not there.
         return true;
     };
 
-    bool deleteEdge(const T &x, const T &y)
+    inline bool deleteEdge(const T &x, const T &y)
     {
         // removes the edge from x to y, if it is there.
         return true;
     };
 
-    int get_node_value(const T &x)
-    {
-        // returns the value associated with the node x.
-        return true;
-    };
-
-    bool set_node_value(const T &x, int a)
-    {
-        // sets the value associated with the node x to a.
-        return true;
-    };
-
-    int get_edge_value(const T &x, const T &y)
+    inline int get_edge_value(const T &x, const T &y)
     {
         // returns the value associated to the edge (x,y).
         return 0;
     };
 
-    bool set_edge_value(const T &x, const T &y, int v)
+    inline bool set_edge_value(const T &x, const T &y, int v)
     {
         // sets the value associated to the edge (x,y) to v.
         return true;
     };
 
-    friend ostream &operator<<(ostream &os, const Graph<T> &graph);
+    template <class N>
+    friend ostream &operator<<(ostream &os, const Graph<N> &graph);
 
 private:
     vector<T> Vertices;
-
-    int prob()
-    {
-        return 1;
-    }
 };
 
 template <class T>
 ostream &operator<<(ostream &os, Graph<T> &graph)
 {
-    for (auto &&node : graph.getVertices())
+    os << "Nodes: ";
+    vector<T> nodes = graph.getVertices();
+    for (T it : nodes)
     {
-        os << node << ", ";
+        os << it << ", ";
     }
+    os << endl;
     return os;
 }
 
 template <class T>
 class PriorityQueue
 /*
-    The value of the PriorityQueue is to always have access to the vertex
-    with the next shortest link in the shortest path calculation at the top of the queue.
-    */
+ * The value of the PriorityQueue is to always have access to the vertex
+ * with the next shortest link in the shortest path calculation at the top of the queue.
+ */
 {
 public:
     PriorityQueue(){};
@@ -160,7 +165,9 @@ public:
 
 template <class T>
 class ShortestPath
-// implements the mechanics of Dijkstra’s algorithm
+/*
+ * implements the mechanics of Dijkstra’s algorithm
+ */
 {
 public:
     ShortestPath(Graph<T> g) : graph(g){};
@@ -195,7 +202,24 @@ private:
 
 int main()
 {
-    Graph<string> testgraph(4, 0.3);
+    const float density = 0.1; // Density in the range [0..1]
+    srand((unsigned)time(NULL));
+    vector<string> nodes = vector<string>{"one", "two", "three", "four"};
+    Graph<string> testgraph(nodes);
+    int size = testgraph.order();
+    for (int i = 0; i < size; i++)
+    {
+        for (int j = 0; j < size; j++)
+        {
+            if (i != j && ((static_cast<double>(rand()) / RAND_MAX) < density))
+            {
+                string node1 = testgraph.get_node_value(i);
+                string node2 = testgraph.get_node_value(j);
+                testgraph.addEdge(node1, node2);
+                testgraph.addEdge(node2, node1);
+            }
+        }
+    }
     cout << testgraph;
     return 0;
 }
