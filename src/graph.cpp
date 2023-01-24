@@ -111,10 +111,10 @@ ostream &operator<<(ostream &os, Graph<T> &graph)
     os << "- Nodes:" << endl;
     for (T node : graph.getVertices())
     {
-        os << "  - " << node << ": ";
+        os << "  - " << node << ":";
         for (T neighbor : graph.neighbors(node))
         {
-            os << "->" << neighbor << "(" << graph.get_edge_value(node, neighbor) << ") ";
+            os << " ->" << neighbor << "(" << graph.get_edge_value(node, neighbor) << ") ";
         }
         os << endl;
     }
