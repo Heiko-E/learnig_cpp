@@ -32,7 +32,7 @@ public:
 
     inline vector<T, T> getEdges()
     {
-        return NULL;
+        return vector<T, T>(0);
     }
 
     inline int order()
@@ -56,7 +56,7 @@ public:
     inline vector<T> neighbors(const T &x)
     {
         // lists all nodes y such that there is an edge from x to y.
-        return NULL;
+        return vector<T>(0);
     };
 
     inline T get_node_value(int idx)
@@ -106,11 +106,17 @@ private:
 template <class T>
 ostream &operator<<(ostream &os, Graph<T> &graph)
 {
-    os << "Nodes: ";
-    vector<T> nodes = graph.getVertices();
-    for (T it : nodes)
+    os << "Graph of order " << graph.order();
+    os << " with density " << graph.density() << endl;
+    os << "- Nodes:" << endl;
+    for (T node : graph.getVertices())
     {
-        os << it << ", ";
+        os << "  - " << node << ": ";
+        for (T neighbor : graph.neighbors(node))
+        {
+            os << "->" << neighbor << "(" << graph.get_edge_value(node, neighbor) << ") ";
+        }
+        os << endl;
     }
     os << endl;
     return os;
@@ -204,14 +210,13 @@ int main()
 {
     const float density = 0.1; // Density in the range [0..1]
     srand((unsigned)time(NULL));
-    vector<string> nodes = vector<string>{"one", "two", "three", "four"};
-    Graph<string> testgraph(nodes);
+    Graph<string> testgraph(vector<string>{"one", "two", "three", "four"});
     int size = testgraph.order();
     for (int i = 0; i < size; i++)
     {
         for (int j = 0; j < size; j++)
         {
-            if (i != j && ((static_cast<double>(rand()) / RAND_MAX) < density))
+            if (i != j && ((static_cast<double>(rand()) / RAND_MAX) <= density))
             {
                 string node1 = testgraph.get_node_value(i);
                 string node2 = testgraph.get_node_value(j);
