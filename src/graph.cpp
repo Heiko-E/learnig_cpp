@@ -15,9 +15,9 @@ public:
 
     Graph(const vector<T> &vertices) : Vertices(vertices)
     {
-        for (T node : this->Vertices)
+        for (int node = 0; node < this->Vertices.size(); node++)
         {
-            this->Edges.insert(pair<T, T>(node, vector<T>(0)));
+            this->Edges.insert(pair<int, vector<int>>(node, vector<int>(0)));
         }
     };
 
@@ -66,12 +66,12 @@ public:
         return true;
     };
 
-    inline vector<T> neighbors(const T &x)
+    inline vector<int> neighbors(int x)
     {
         /// @brief lists all nodes y such that there is an edge from x to y.
         /// @param x starting node of the edge
         /// @return all neighbors of the node
-        return vector<T>(this->Edges.at(x));
+        return vector<int>(this->Edges.at(x));
     };
 
     inline T get_node_value(int idx)
@@ -92,32 +92,32 @@ public:
         return true;
     };
 
-    inline bool addEdge(const T &x, const T &y)
+    inline bool addEdge(int x, int y)
     {
         /// @brief adds to the graph the edge from x to y, if it is not there.
         /// @param x start node of the edge
         /// @param y end node of the edge
         /// @return true if the edge was successfully added
-        vector<T> neighbors = this->Edges.at(x);
-        if (count(neighbors.begin(), neighbors.end(), y))
+        vector<int> neighbors = this->Edges.at(x);
+        if (!count(neighbors.begin(), neighbors.end(), y))
         {
             neighbors.push_back(y);
         }
         return true;
     };
 
-    inline bool deleteEdge(const T &x, const T &y)
+    inline bool deleteEdge(int x, int y)
     {
         /// @brief removes the edge from x to y, if it is there.
         /// @param x start node of the edge
         /// @param y end node of the edge
         /// @return true if the edge was successfully deleted
-        vector<T> neighbors = this->Edges.at(x);
+        vector<int> neighbors = this->Edges.at(x);
 
         return true;
     };
 
-    inline int get_edge_value(const T &x, const T &y)
+    inline int get_edge_value(int x, int y)
     {
         /// @brief returns the value associated to the edge (x,y).
         /// @param x start node of the edge
@@ -141,7 +141,7 @@ public:
 
 private:
     vector<T> Vertices;
-    map<T, vector<T>> Edges;
+    map<int, vector<int>> Edges;
 };
 
 template <class T>
@@ -155,13 +155,14 @@ ostream &operator<<(ostream &os, Graph<T> &graph)
     os << "Graph of order " << graph.order();
     os << " with density " << graph.density() << endl;
     os << "- Nodes:" << endl;
-    for (T node : graph.getVertices())
+    for (int node = 0; node < graph.order(); node++)
     {
-        os << "  - " << node << ":";
-        for (T neighbor : graph.neighbors(node))
+        os << "  " << node << ". " << graph.get_node_value(node) << ":";
+        for (int neighbor : graph.neighbors(node))
         {
-            os << " ->" << neighbor << "(" << graph.get_edge_value(node, neighbor) << ") ";
-        }
+            os << " ->" << graph.get_node_value(neighbor);
+            os << "(" << graph.get_edge_value(node, neighbor) << ") ";
+        };
         os << endl;
     }
     os << endl;
@@ -264,10 +265,8 @@ int main()
         {
             if (i != j && ((static_cast<double>(rand()) / RAND_MAX) <= density))
             {
-                string node1 = testgraph.get_node_value(i);
-                string node2 = testgraph.get_node_value(j);
-                testgraph.addEdge(node1, node2);
-                testgraph.addEdge(node2, node1);
+                testgraph.addEdge(i, j);
+                testgraph.addEdge(j, i);
             }
         }
     }
