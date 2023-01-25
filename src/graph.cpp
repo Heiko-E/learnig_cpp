@@ -47,7 +47,13 @@ public:
     {
         /// @brief density of the graph
         /// @return density in the range [0..1]
-        return 0;
+        int maxEdges = this->order() * (this->order() - 1);
+        int edgeCount = 0;
+        for (pair<int, map<int, int>> entry : this->Edges)
+        {
+            edgeCount = edgeCount + entry.second.size();
+        }
+        return static_cast<float>(edgeCount) / maxEdges;
     }
 
     inline bool adjacent(const T &x, const T &y)
@@ -280,11 +286,20 @@ private:
     Graph<T> graph;
 };
 
-int main()
+Graph<string> graph_generator(int nodecount, float density)
 {
-    const float density = 0.1; // Density in the range [0..1]
+    /// @brief generates a graph with the given number of nodes and
+    ///        approximately the given density
+    /// @param nodecount number of nodes
+    /// @param density requested densityin the range [0..1]
+    /// @return the generated graph object
     srand((unsigned)time(NULL));
-    Graph<string> testgraph(vector<string>{"one", "two", "three", "four"});
+    vector<string> nodes;
+    for (int i = 0; i < nodecount; i++)
+    {
+        nodes.push_back(to_string(i));
+    }
+    Graph<string> testgraph(nodes);
     int size = testgraph.order();
     for (int i = 0; i < size; i++)
     {
@@ -299,6 +314,12 @@ int main()
             }
         }
     }
+    return testgraph;
+}
+
+int main()
+{
+    Graph<string> testgraph = graph_generator(45, 0.1);
     cout << testgraph;
     return 0;
 }
