@@ -11,36 +11,36 @@ class Graph
  */
 {
 public:
-    Graph() : Vertices(vector<T>(0)) {}
+    Graph() : vertices(vector<T>(0)) {}
 
-    Graph(const vector<T> &vertices) : Vertices(vertices)
+    Graph(const vector<T> &vertices) : vertices(vertices)
     {
-        for (int node = 0; node < this->Vertices.size(); node++)
+        for (int node = 0; node < this->vertices.size(); node++)
         {
-            this->Edges.insert(pair<int, map<int, int>>(node, map<int, int>()));
+            this->edges.insert(pair<int, map<int, int>>(node, map<int, int>()));
         }
     }
 
-    Graph(const Graph<T> &graph) : Vertices(graph.Vertices), Edges(graph.Edges) {}
+    Graph(const Graph<T> &graph) : vertices(graph.vertices), edges(graph.edges) {}
 
     ~Graph()
     {
-        Vertices.clear();
-        Edges.clear();
+        vertices.clear();
+        edges.clear();
     }
 
     inline vector<T> getVertices()
     {
         /// @brief get all nodes of the graph
         /// @return all node values of the graph
-        return vector<T>(Vertices);
+        return vector<T>(vertices);
     }
 
     inline int order()
     {
         /// @brief get the order of the graph
         /// @return number of vertices of the graph
-        return this->Vertices.size();
+        return this->vertices.size();
     }
 
     float density()
@@ -49,7 +49,7 @@ public:
         /// @return density in the range [0..1]
         int maxEdges = this->order() * (this->order() - 1);
         int edgeCount = 0;
-        for (pair<int, map<int, int>> entry : this->Edges)
+        for (pair<int, map<int, int>> entry : this->edges)
         {
             edgeCount = edgeCount + entry.second.size();
         }
@@ -73,7 +73,7 @@ public:
         vector<int> neighbors;
         if (0 <= x < this->order())
         {
-            for (pair<int, int> edge : this->Edges.at(x))
+            for (pair<int, int> edge : this->edges.at(x))
             {
                 neighbors.push_back(edge.first);
             }
@@ -88,7 +88,7 @@ public:
         /// @return value of the node
         if (0 <= x < this->order())
         {
-            return this->Vertices.at(x);
+            return this->vertices.at(x);
         }
         return NULL;
     }
@@ -101,7 +101,7 @@ public:
         /// @return true if the node was successfully updated
         if (0 <= x < this->order())
         {
-            this->Vertices.at(x) = node;
+            this->vertices.at(x) = node;
             return true;
         }
         return false;
@@ -113,9 +113,9 @@ public:
         /// @param x index of start node of the edge
         /// @param y index of end node of the edge
         /// @return true if the edge was successfully added
-        if (this->Edges.count(x) && !this->Edges.at(x).count(y) && 0 <= y < this->order())
+        if (this->edges.count(x) && !this->edges.at(x).count(y) && 0 <= y < this->order())
         {
-            this->Edges.at(x).insert(pair<int, int>(y, 1));
+            this->edges.at(x).insert(pair<int, int>(y, 1));
             return true;
         }
         return false;
@@ -127,9 +127,9 @@ public:
         /// @param x index of start node of the edge
         /// @param y index of end node of the edge
         /// @return true if the edge was successfully deleted
-        if (this->Edges.count(x) && this->Edges.at(x).count(y))
+        if (this->edges.count(x) && this->edges.at(x).count(y))
         {
-            this->Edges.at(x).erase(y);
+            this->edges.at(x).erase(y);
         }
         return true;
     }
@@ -140,9 +140,9 @@ public:
         /// @param x index of start node of the edge
         /// @param y index of end node of the edge
         /// @return value of the edge
-        if (this->Edges.count(x) && this->Edges.at(x).count(y))
+        if (this->edges.count(x) && this->edges.at(x).count(y))
         {
-            return this->Edges.at(x).at(y);
+            return this->edges.at(x).at(y);
         }
         return -1;
     }
@@ -154,9 +154,9 @@ public:
         /// @param y index of end node of the edge
         /// @param v new value of the edge
         /// @return true if value is succefully updated
-        if (this->Edges.count(x) && this->Edges.at(x).count(y))
+        if (this->edges.count(x) && this->edges.at(x).count(y))
         {
-            this->Edges.at(x).at(y) = v;
+            this->edges.at(x).at(y) = v;
             return true;
         }
         return false;
@@ -166,14 +166,14 @@ public:
     friend ostream &operator<<(ostream &os, const Graph<N> &graph);
 
 private:
-    vector<T> Vertices;
+    vector<T> vertices;
     /*Edges are stored in a map to enablefast lookup if the starting node is given.
     - Key is the start node
     - All nodes that arre the end point of a edge are stored in a end point map
         - Key is the index in the end node,
         - Value is the value of the edge
     */
-    map<int, map<int, int>> Edges;
+    map<int, map<int, int>> edges;
 };
 
 template <class T>
@@ -260,13 +260,14 @@ public:
 
     ~ShortestPath()
     {
-        delete this->graph;
+        // delete this->graph;
     }
 
-    vector<T, T> vertices()
+    vector<T> vertices()
     {
-        // list of vertices in G(V,E).
-        return vector<T, T>(0);
+        /// @brief list of vertices in G(V,E).
+        /// @return the vertices
+        return this->graph.getVertices();
     }
 
     vector<T> path(const T &u, const T &w)
@@ -321,5 +322,7 @@ int main()
 {
     Graph<string> testgraph = graph_generator(200, 0.01);
     cout << testgraph;
+    ShortestPath<string> path = ShortestPath<string>(testgraph);
+
     return 0;
 }
