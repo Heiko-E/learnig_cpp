@@ -26,7 +26,7 @@ public:
     ~Graph()
     {
         Vertices.clear();
-        // delete *Vertices;
+        Edges.clear();
     };
 
     inline vector<T> getVertices()
@@ -60,8 +60,8 @@ public:
     inline bool adjacent(const T &x, const T &y)
     {
         /// @brief tests whether there is an edge from node x to node y.
-        /// @param x start node
-        /// @param y end node of the edge
+        /// @param x index of start node
+        /// @param y index of end node of the edge
         /// @return true if there is a edge
         return true;
     };
@@ -69,39 +69,38 @@ public:
     inline vector<int> neighbors(int x)
     {
         /// @brief lists all nodes y such that there is an edge from x to y.
-        /// @param x starting node of the edge
+        /// @param x index of starting node of the edge
         /// @return all neighbors of the node
         return vector<int>(this->Edges.at(x));
     };
 
-    inline T get_node_value(int idx)
+    inline T get_node_value(int x)
     {
         /// @brief returns the value associated with the node idx.
-        /// @param idx number of the node
+        /// @param x index of the node
         /// @return value of the node
         return this->Vertices.at(idx);
     };
 
-    inline bool set_node_value(int idx, const T &node)
+    inline bool set_node_value(int x, const T &node)
     {
         /// @brief sets the value associated with the node idx to a.
-        /// @param idx number of the node
+        /// @param x index of the node
         /// @param node new value of the node
         /// @return true if the node was successfully updated
-        this->Vertices.at(idx) = node;
+        this->Vertices.at(x) = node;
         return true;
     };
 
     inline bool addEdge(int x, int y)
     {
         /// @brief adds to the graph the edge from x to y, if it is not there.
-        /// @param x start node of the edge
-        /// @param y end node of the edge
+        /// @param x index of start node of the edge
+        /// @param y index of end node of the edge
         /// @return true if the edge was successfully added
-        vector<int> neighbors = this->Edges.at(x);
-        if (!count(neighbors.begin(), neighbors.end(), y))
+        if (!count(this->Edges.at(x).begin(), this->Edges.at(x).end(), y))
         {
-            neighbors.push_back(y);
+            this->Edges.at(x).push_back(y);
         }
         return true;
     };
@@ -109,19 +108,24 @@ public:
     inline bool deleteEdge(int x, int y)
     {
         /// @brief removes the edge from x to y, if it is there.
-        /// @param x start node of the edge
-        /// @param y end node of the edge
+        /// @param x index of start node of the edge
+        /// @param y index of end node of the edge
         /// @return true if the edge was successfully deleted
-        vector<int> neighbors = this->Edges.at(x);
-
+        for (vector<int>::iterator it = this->Edges.at(x).begin(); it != this->Edges.at(x).end(); it++)
+        {
+            if (*it == y)
+            {
+                this->Edges.at(x).erase(it);
+            };
+        };
         return true;
     };
 
     inline int get_edge_value(int x, int y)
     {
         /// @brief returns the value associated to the edge (x,y).
-        /// @param x start node of the edge
-        /// @param y end node of the edge
+        /// @param x index of start node of the edge
+        /// @param y index of end node of the edge
         /// @return value of the edge
         return 0;
     };
@@ -129,8 +133,8 @@ public:
     inline bool set_edge_value(const T &x, const T &y, int v)
     {
         /// @brief sets the value associated to the edge (x,y) to v.
-        /// @param x start node of the edge
-        /// @param y end node of the edge
+        /// @param x index of start node of the edge
+        /// @param y index of end node of the edge
         /// @param v new value of the edge
         /// @return true if value is succefully updated
         return true;
