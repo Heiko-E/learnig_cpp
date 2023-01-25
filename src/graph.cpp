@@ -293,7 +293,7 @@ Graph<string> graph_generator(int nodecount, float density)
     /// @param nodecount number of nodes
     /// @param density requested densityin the range [0..1]
     /// @return the generated graph object
-    srand((unsigned)time(NULL));
+    srand(static_cast<unsigned>(time(NULL)));
     vector<string> nodes;
     for (int i = 0; i < nodecount; i++)
     {
@@ -319,7 +319,7 @@ Graph<string> graph_generator(int nodecount, float density)
 
 int main()
 {
-    Graph<string> testgraph = graph_generator(45, 0.1);
+    Graph<string> testgraph = graph_generator(200, 0.01);
     cout << testgraph;
     return 0;
 }
