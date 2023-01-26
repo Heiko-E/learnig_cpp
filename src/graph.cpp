@@ -284,7 +284,7 @@ public:
         {
             int cost = this->graph.get_edge_value(u, next);
         }
-        return vector<int>{u};
+        return vector<int>{0};
     }
 
     int path_size(int u, int w)
