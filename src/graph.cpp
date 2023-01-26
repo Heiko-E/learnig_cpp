@@ -52,15 +52,6 @@ public:
         return static_cast<float>(edgeCount) / maxEdges;
     }
 
-    inline bool adjacent(const T &x, const T &y)
-    {
-        /// @brief tests whether there is an edge from node x to node y.
-        /// @param x index of start node
-        /// @param y index of end node of the edge
-        /// @return true if there is a edge
-        return true;
-    }
-
     inline vector<int> neighbors(int x)
     {
         /// @brief lists all nodes y such that there is an edge from x to y.
@@ -109,7 +100,7 @@ public:
         /// @param x index of start node of the edge
         /// @param y index of end node of the edge
         /// @return true if the edge was successfully added
-        if (this->edges.count(x) && !this->edges.at(x).count(y) && 0 <= y < this->order())
+        if (!this->adjacent(x, y) && 0 <= y < this->order())
         {
             this->edges.at(x).insert(pair<int, int>(y, 1));
             return true;
@@ -123,7 +114,7 @@ public:
         /// @param x index of start node of the edge
         /// @param y index of end node of the edge
         /// @return true if the edge was successfully deleted
-        if (this->edges.count(x) && this->edges.at(x).count(y))
+        if (this->adjacent(x, y))
         {
             this->edges.at(x).erase(y);
         }
@@ -136,7 +127,7 @@ public:
         /// @param x index of start node of the edge
         /// @param y index of end node of the edge
         /// @return value of the edge
-        if (this->edges.count(x) && this->edges.at(x).count(y))
+        if (this->adjacent(x, y))
         {
             return this->edges.at(x).at(y);
         }
@@ -150,12 +141,21 @@ public:
         /// @param y index of end node of the edge
         /// @param v new value of the edge
         /// @return true if value is succefully updated
-        if (this->edges.count(x) && this->edges.at(x).count(y))
+        if (this->adjacent(x, y))
         {
             this->edges.at(x).at(y) = v;
             return true;
         }
         return false;
+    }
+
+    inline bool adjacent(int x, int y)
+    {
+        /// @brief tests whether there is an edge from node x to node y.
+        /// @param x index of start node
+        /// @param y index of end node of the edge
+        /// @return true if there is a edge
+        return this->edges.count(x) && this->edges.at(x).count(y);
     }
 
     template <class N>
@@ -199,7 +199,6 @@ ostream &operator<<(ostream &os, Graph<T> &graph)
     return os;
 }
 
-template <class T>
 class PriorityQueue
 /*
  * The value of the PriorityQueue is to always have access to the vertex
@@ -211,40 +210,46 @@ public:
 
     ~PriorityQueue() {}
 
-    bool chgPrioirity(int priority)
+    bool chgPrioirity(int queue_element, int priority)
     {
         // changes the priority (node value) of queue element.
         return false;
     }
 
-    bool minPrioirty()
+    int minPrioirty()
     {
         // removes the top element of the queue.
         return false;
     }
 
-    bool contains(const T &queue_element)
+    bool contains(int queue_element)
     {
         // does the queue contain queue_element.
         return false;
     }
 
-    bool Insert(const T &queue_element)
+    bool Insert(int queue_element)
     {
         // insert queue_element into queue
-        return false;
+        this->queue.push_back(queue_element);
+        return true;
     }
 
-    T top()
+    int top()
     {
         // returns the top element of the queue.
+        return -1;
     }
 
     int size()
     {
-        // return the number of queue_elements.
-        return 0;
+        /// @brief get the number of queue_elements
+        /// @return number of queue_elements
+        return this->queue.size();
     };
+
+private:
+    vector<int> queue;
 };
 
 template <class T>
@@ -265,29 +270,45 @@ public:
         return this->graph.getVertices();
     }
 
-    vector<T> path(const T &u, const T &w)
+    vector<int> path(int u, int w)
     {
-        // find shortest path between u-w and
-        // returns the sequence of vertices representing shorest path u-v1-v2-…-vn-w.
-        return NULL;
+        /// @brief find shortest path between u-w
+        /// @param u index of start node
+        /// @param w index of target node
+        /// @return the sequence of vertices representing shorest path u-v1-v2-…-vn-w.
+        return vector<int>{u};
     }
 
-    int path_size(const T &u, const T &w)
+    int path_size(int u, int w)
     {
-        // return the path cost associated with the shortest path.
+        /// @brief get the cost of the shortest path between u-w
+        /// @param u index of start node
+        /// @param w index of target node
+        /// @return the path cost associated with the shortest path.
         return 0;
     }
 
 private:
     Graph<T> graph;
+    PriorityQueue queue;
+
+    inline void calculate_path(int u, int w)
+    {
+        vector<int> next = this->graph.neighbors(u);
+        for (int node : next)
+        {
+            int cost = this->graph.get_edge_value(u, next);
+        }
+    }
 };
 
-Graph<string> graph_generator(int nodecount, float density)
+Graph<string> graph_generator(int nodecount, float density, int distance_range)
 {
     /// @brief generates a graph with the given number of nodes and
     ///        approximately the given density
     /// @param nodecount number of nodes
     /// @param density requested densityin the range [0..1]
+    /// @param distance_range max distance value of an edge
     /// @return the generated graph object
     srand(static_cast<unsigned>(time(NULL)));
     vector<string> nodes;
@@ -305,8 +326,8 @@ Graph<string> graph_generator(int nodecount, float density)
             {
                 testgraph.addEdge(i, j);
                 testgraph.addEdge(j, i);
-                testgraph.set_edge_value(i, j, rand() % 100);
-                testgraph.set_edge_value(j, i, rand() % 100);
+                testgraph.set_edge_value(i, j, rand() % distance_range);
+                testgraph.set_edge_value(j, i, rand() % distance_range);
             }
         }
     }
@@ -315,9 +336,9 @@ Graph<string> graph_generator(int nodecount, float density)
 
 int main()
 {
-    Graph<string> testgraph = graph_generator(200, 0.01);
+    Graph<string> testgraph = graph_generator(200, 0.0, 10);
     cout << testgraph;
     ShortestPath<string> path = ShortestPath<string>(testgraph);
-
+    cout << "Distance from 3 to 65 is " << path.path_size(3, 65) << endl;
     return 0;
 }
