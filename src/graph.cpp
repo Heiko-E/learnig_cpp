@@ -228,7 +228,7 @@ public:
         return false;
     }
 
-    bool Insert(int queue_element)
+    bool Insert(int queue_element, int cost)
     {
         // insert queue_element into queue
         this->queue.push_back(queue_element);
@@ -276,6 +276,14 @@ public:
         /// @param u index of start node
         /// @param w index of target node
         /// @return the sequence of vertices representing shorest path u-v1-v2-…-vn-w.
+        PriorityQueue open_set;
+        open_set.Insert(u, 0);
+        vector<bool> closed_set = vector<bool>(this->vertices().size(), false);
+        int next = open_set.top();
+        for (int node : this->graph.neighbors(next))
+        {
+            int cost = this->graph.get_edge_value(u, next);
+        }
         return vector<int>{u};
     }
 
@@ -291,15 +299,6 @@ public:
 private:
     Graph<T> graph;
     PriorityQueue queue;
-
-    inline void calculate_path(int u, int w)
-    {
-        vector<int> next = this->graph.neighbors(u);
-        for (int node : next)
-        {
-            int cost = this->graph.get_edge_value(u, next);
-        }
-    }
 };
 
 Graph<string> graph_generator(int nodecount, float density, int distance_range)
