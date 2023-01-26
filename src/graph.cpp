@@ -23,11 +23,7 @@ public:
 
     Graph(const Graph<T> &graph) : vertices(graph.vertices), edges(graph.edges) {}
 
-    ~Graph()
-    {
-        vertices.clear();
-        edges.clear();
-    }
+    ~Graph() {}
 
     inline vector<T> getVertices()
     {
@@ -166,6 +162,8 @@ public:
     friend ostream &operator<<(ostream &os, const Graph<N> &graph);
 
 private:
+    /* All node values of the graph. The index in the vectoris used as a reference.
+     */
     vector<T> vertices;
     /*Edges are stored in a map to enablefast lookup if the starting node is given.
     - Key is the start node
@@ -256,12 +254,9 @@ class ShortestPath
  */
 {
 public:
-    ShortestPath(Graph<T> g) : graph(g) {}
+    ShortestPath(const Graph<T> &g) : graph(g) {}
 
-    ~ShortestPath()
-    {
-        // delete this->graph;
-    }
+    ~ShortestPath() {}
 
     vector<T> vertices()
     {
@@ -300,7 +295,7 @@ Graph<string> graph_generator(int nodecount, float density)
     {
         nodes.push_back(to_string(i));
     }
-    Graph<string> testgraph(nodes);
+    Graph<string> testgraph = Graph<string>(nodes);
     int size = testgraph.order();
     for (int i = 0; i < size; i++)
     {
