@@ -197,7 +197,7 @@ ostream &operator<<(ostream &os, const Graph<T> &graph)
     os << "- Nodes:" << endl;
     for (int node = 0; node < graph.order(); node++)
     {
-        os << "  " << node << ". " << graph.getNodeValue(node) << ":";
+        os << "  [Id: " << node << " Data: " << graph.getNodeValue(node) << "]";
         for (int neighbor : graph.neighbors(node))
         {
             os << " ->" << graph.getNodeValue(neighbor);
