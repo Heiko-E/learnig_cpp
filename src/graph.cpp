@@ -220,21 +220,27 @@ public:
 
     ~PriorityQueue() {}
 
-    bool changePrioirity(const T &queueElement, int priority)
+    bool setMinPrioirity(const T &queueElement, int priority)
     {
-        /// @brief changes the priority and path of a queue element.
+        /// @brief changes the priority and path of a queue element to the minimum.
         /// @param queueElement the element to change
         /// @param priority the new priority
         /// @return true if the update succeeded
 
-        for (pair<T, int> element : this->queue_)
+        typename list<pair<T, int>>::iterator it;
+        for (it = this->queue_.begin(); it != this->queue_.end(); it++)
         {
-            if (element.first == queueElement)
+            if (it->first == queueElement)
             {
-                element.second = priority;
-                this->queue_.sort([](pair<T, int> a, pair<T, int> b)
-                                  { return a.second < b.second; });
-                return true;
+                if (it->second > priority)
+                {
+                    it->second = priority;
+                    it->first = queueElement;
+                    this->queue_.sort([](pair<T, int> a, pair<T, int> b)
+                                      { return a.second < b.second; });
+                    return true;
+                }
+                return false;
             }
         }
         return false;
@@ -273,6 +279,10 @@ public:
         typename list<pair<T, int>>::iterator it;
         if (this->contains(queueElement))
         {
+            return this->setMinPrioirity(queueElement, priority);
+        }
+        else
+        {
             for (it = this->queue_.begin(); it != this->queue_.end(); it++)
             {
                 if (it->second > priority)
@@ -282,11 +292,8 @@ public:
                 }
             }
         }
-        else
-        {
-            return this->changePrioirity(queueElement, priority);
-        }
-        return false;
+        this->queue_.push_back(pair<T, int>(queueElement, priority));
+        return true;
     }
 
     T popTop()
@@ -307,10 +314,30 @@ public:
         return this->queue_.size();
     };
 
+    template <class N>
+    friend ostream &operator<<(ostream &os, const PriorityQueue<T> &queue);
+
 private:
     /// @brief each queue element is a pair of the element and its current priority
     list<pair<T, int>> queue_;
 };
+
+template <class T>
+ostream &operator<<(ostream &os, const PriorityQueue<T> &queue)
+{
+    /// @brief Output operator for PriorityQueue<T> class
+    /// @tparam T Type of the queue elements
+    /// @param os output stream
+    /// @param queue the queue element to add to the output
+    /// @return output stream
+
+    os << "Queue with elements: " << endl;
+    for (pair<T, int> element : queue.queue_)
+    {
+        os << "Priority: " << element.second << " Data: " << element.first << endl;
+    }
+    return os;
+}
 
 class SetElement
 {
@@ -376,7 +403,6 @@ bool operator!=(const SetElement &set1, const SetElement &set2)
 ostream &operator<<(ostream &os, const SetElement &set)
 {
     /// @brief Output operator for Graph<T> class
-    /// @tparam T Type of the nodes of the graph
     /// @param os output stream
     /// @param set the set element to add to the output
     /// @return output stream
@@ -516,11 +542,15 @@ private:
         int currentCost = 0;
         vector<int> currentPath = vector<int>{this->start_};
         int nextNode = this->start_;
-        while (nextNode != destination_ && count(closedSet.begin(), closedSet.end(), this->destination_))
+        while (nextNode != destination_ && count(closedSet.begin(), closedSet.end(), false))
         {
             closedSet.at(nextNode) = true;
             for (int node : this->graph_.neighbors(nextNode))
             {
+                if (closedSet.at(node))
+                {
+                    continue;
+                }
                 int cost = this->graph_.getEdgeValue(nextNode, node);
                 vector<int> nodePath = vector<int>(currentPath);
                 nodePath.push_back(node);
@@ -531,7 +561,7 @@ private:
             currentPath = element.path();
             nextNode = element.node();
         }
-        if (nextNode != destination_)
+        if (nextNode == destination_)
         {
             this->cost_ = currentCost;
             this->path_ = currentPath;
@@ -558,7 +588,7 @@ ostream &operator<<(ostream &os, const ShortestPath<T> &shortPath)
     os << shortPath.destination() << " is ";
     for (int node : shortPath.path())
     {
-        os << node << ". " << shortPath.graph().getNodeValue(node);
+        os << node;
         if (node != shortPath.destination())
         {
             os << " -> ";
