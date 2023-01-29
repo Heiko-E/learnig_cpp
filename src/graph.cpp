@@ -191,6 +191,7 @@ ostream &operator<<(ostream &os, Graph<T> &graph)
     /// @param os output stream
     /// @param graph the graph object to add to the output
     /// @return output stream
+
     os << "Graph of order " << graph.order();
     os << " with density " << graph.density() << endl;
     os << "- Nodes:" << endl;
@@ -352,11 +353,21 @@ private:
 
 bool operator==(SetElement &set1, SetElement &set2)
 {
+    /// @brief Compare operator for equality of two SetElement objects
+    /// @param set1 SetElement object 1
+    /// @param set2 SetElement object 2
+    /// @return True if the destination nodes of both elements are equal
+
     return (set1.node() == set2.node());
 }
 
 bool operator!=(SetElement &set1, SetElement &set2)
 {
+    /// @brief Compare operator for non equality of two SetElement objects
+    /// @param set1 SetElement object 1
+    /// @param set2 SetElement object 2
+    /// @return True if the destination nodes of both elements are not equal
+
     return (set1.node() != set2.node());
 }
 
@@ -367,6 +378,7 @@ ostream &operator<<(ostream &os, SetElement &set)
     /// @param os output stream
     /// @param set the set element to add to the output
     /// @return output stream
+
     os << "Node: " << set.node() << endl;
     os << "Path: ";
     vector<int> path = set.path();
@@ -418,6 +430,7 @@ public:
     {
         /// @brief get the graph object of the path
         /// @return the graph object
+
         return this->graph_;
     }
 
@@ -425,6 +438,7 @@ public:
     {
         /// @brief get the start node of the path
         /// @return the start node
+
         return this->start_;
     }
 
@@ -432,6 +446,7 @@ public:
     {
         /// @brief get the destination node of the path
         /// @return the destination node
+
         return this->destination_;
     }
 
@@ -440,6 +455,7 @@ public:
         /// @brief set the start node of the path
         /// @param u index of node
         /// @return true if the update succeeded
+
         this->start_ = u;
         return this->calculate();
     }
@@ -449,6 +465,7 @@ public:
         /// @brief set the destination node of the path
         /// @param w index of node
         /// @return true if the update succeeded
+
         this->destination_ = w;
         return this->calculate();
     }
@@ -457,6 +474,7 @@ public:
     {
         /// @brief list of vertices in G(V,E).
         /// @return the vertices
+
         return this->graph_.vertices();
     }
 
@@ -464,6 +482,7 @@ public:
     {
         /// @brief find shortest path between u-w
         /// @return the sequence of vertices representing shorest path u-v1-v2-…-vn-w.
+
         return this->path_;
     }
 
@@ -471,6 +490,7 @@ public:
     {
         /// @brief get the cost of the shortest path between u-w
         /// @return the path cost associated with the shortest path.
+
         return this->cost_;
     }
 
@@ -488,6 +508,7 @@ private:
     {
         /// @brief calculate the shortest path vector and the cost of this path
         /// @return True if calculation was succeeded
+
         PriorityQueue<SetElement> openSet;
         vector<bool> closedSet = vector<bool>(this->vertices().size(), false);
         int currentCost = 0;
@@ -528,6 +549,7 @@ ostream &operator<<(ostream &os, ShortestPath<T> &shortPath)
     /// @param os output stream
     /// @param shortPath the shortest path to add to the output
     /// @return output stream
+
     os << "Distance from " << shortPath.start() << " to ";
     os << shortPath.destination() << " is " << shortPath.pathSize() << endl;
     os << "Shortest path from " << shortPath.start() << " to ";
@@ -552,6 +574,7 @@ Graph<string> graph_generator(int nodecount, float density, unsigned distance_ra
     /// @param density requested densityin the range [0..1]
     /// @param distance_range max distance value of an edge
     /// @return the generated graph object
+
     srand(static_cast<unsigned>(time(NULL)));
     vector<string> nodes;
     for (int i = 0; i < nodecount; i++)
