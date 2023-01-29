@@ -52,7 +52,9 @@
         "regex": "cpp",
         "bitset": "cpp",
         "mutex": "cpp",
-        "shared_mutex": "cpp"
+        "shared_mutex": "cpp",
+        "queue": "cpp",
+        "valarray": "cpp"
     },
     "cmake.mingwSearchDirs": [
         "C:mingw64\\bin"
