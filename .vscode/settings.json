@@ -49,7 +49,10 @@
         "streambuf": "cpp",
         "typeinfo": "cpp",
         "compare": "cpp",
-        "regex": "cpp"
+        "regex": "cpp",
+        "bitset": "cpp",
+        "mutex": "cpp",
+        "shared_mutex": "cpp"
     },
     "cmake.mingwSearchDirs": [
         "C:mingw64\\bin"
