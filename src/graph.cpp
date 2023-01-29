@@ -31,7 +31,7 @@ public:
         return vector<T>(vertices_);
     }
 
-    int order()
+    int order() const
     {
         /// @brief get the order of the graph
         /// @return number of vertices of the graph
@@ -39,7 +39,7 @@ public:
         return this->vertices_.size();
     }
 
-    float density()
+    float density() const
     {
         /// @brief density of the graph
         /// @return density in the range [0..1]
@@ -53,7 +53,7 @@ public:
         return static_cast<float>(edgeCount) / maxEdges;
     }
 
-    vector<int> neighbors(int x)
+    vector<int> neighbors(int x) const
     {
         /// @brief lists all nodes y such that there is an edge from x to y.
         /// @param x index of starting node of the edge
@@ -70,7 +70,7 @@ public:
         return neighbors;
     }
 
-    T getNodeValue(int x)
+    T getNodeValue(int x) const
     {
         /// @brief returns the value associated with the node idx.
         /// @param x index of the node
@@ -127,7 +127,7 @@ public:
         return true;
     }
 
-    int getEdgeValue(int x, int y)
+    int getEdgeValue(int x, int y) const
     {
         /// @brief returns the value associated to the edge (x,y).
         /// @param x index of start node of the edge
@@ -157,7 +157,7 @@ public:
         return false;
     }
 
-    bool adjacent(int x, int y)
+    bool adjacent(int x, int y) const
     {
         /// @brief tests whether there is an edge from node x to node y.
         /// @param x index of start node
@@ -184,7 +184,7 @@ private:
 };
 
 template <class T>
-ostream &operator<<(ostream &os, Graph<T> &graph)
+ostream &operator<<(ostream &os, const Graph<T> &graph)
 {
     /// @brief Output operator for Graph<T> class
     /// @tparam T Type of the nodes of the graph
@@ -326,7 +326,7 @@ public:
 
     ~SetElement() {}
 
-    inline int node()
+    inline int node() const
     {
         /// @brief get the destination node of this element
         /// @return node index
@@ -334,7 +334,7 @@ public:
         return this->node_;
     }
 
-    inline vector<int> path()
+    inline vector<int> path() const
     {
         /// @brief get the current path to the node
         /// @return path as list of nodes
@@ -347,11 +347,13 @@ public:
     friend bool operator!=(const SetElement &set1, const SetElement &set2);
 
 private:
+    /// @brief destination node
     int node_;
+    /// @brief path to the destination node
     vector<int> path_;
 };
 
-bool operator==(SetElement &set1, SetElement &set2)
+bool operator==(const SetElement &set1, const SetElement &set2)
 {
     /// @brief Compare operator for equality of two SetElement objects
     /// @param set1 SetElement object 1
@@ -361,7 +363,7 @@ bool operator==(SetElement &set1, SetElement &set2)
     return (set1.node() == set2.node());
 }
 
-bool operator!=(SetElement &set1, SetElement &set2)
+bool operator!=(const SetElement &set1, const SetElement &set2)
 {
     /// @brief Compare operator for non equality of two SetElement objects
     /// @param set1 SetElement object 1
@@ -371,7 +373,7 @@ bool operator!=(SetElement &set1, SetElement &set2)
     return (set1.node() != set2.node());
 }
 
-ostream &operator<<(ostream &os, SetElement &set)
+ostream &operator<<(ostream &os, const SetElement &set)
 {
     /// @brief Output operator for Graph<T> class
     /// @tparam T Type of the nodes of the graph
@@ -426,7 +428,7 @@ public:
 
     ~ShortestPath() {}
 
-    Graph<T> graph()
+    Graph<T> graph() const
     {
         /// @brief get the graph object of the path
         /// @return the graph object
@@ -434,7 +436,7 @@ public:
         return this->graph_;
     }
 
-    int start()
+    int start() const
     {
         /// @brief get the start node of the path
         /// @return the start node
@@ -442,7 +444,7 @@ public:
         return this->start_;
     }
 
-    int destination()
+    int destination() const
     {
         /// @brief get the destination node of the path
         /// @return the destination node
@@ -478,7 +480,7 @@ public:
         return this->graph_.vertices();
     }
 
-    vector<int> path()
+    vector<int> path() const
     {
         /// @brief find shortest path between u-w
         /// @return the sequence of vertices representing shorest path u-v1-v2-…-vn-w.
@@ -486,7 +488,7 @@ public:
         return this->path_;
     }
 
-    int pathSize()
+    int pathSize() const
     {
         /// @brief get the cost of the shortest path between u-w
         /// @return the path cost associated with the shortest path.
@@ -542,7 +544,7 @@ private:
 };
 
 template <class T>
-ostream &operator<<(ostream &os, ShortestPath<T> &shortPath)
+ostream &operator<<(ostream &os, const ShortestPath<T> &shortPath)
 {
     /// @brief Output operator for Graph<T> class
     /// @tparam T Type of the nodes of the graph
