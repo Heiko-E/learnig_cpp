@@ -212,32 +212,49 @@ public:
 
     bool chgPrioirity(int queue_element, int priority)
     {
-        // changes the priority (node value) of queue element.
+        /// @brief changes the priority (node value) of queue element.
+        /// @param queue_element the  element to change
+        /// @param priority the new priority
+        /// @return true if the update succeeded
         return false;
     }
 
     int minPrioirty()
     {
-        // removes the top element of the queue.
-        return false;
+        /// @brief priority of the top element of the queue.
+        /// @return the pririty of the top element.
+        return 0;
     }
 
     bool contains(int queue_element)
     {
-        // does the queue contain queue_element.
+        /// @brief does the queue contain the element.
+        /// @param queue_element the node to look for
+        /// @return true if node is in the queue
         return false;
     }
 
-    bool Insert(int queue_element, int cost)
+    bool Insert(int queue_element, int priority)
     {
-        // insert queue_element into queue
-        this->queue.push_back(queue_element);
+        /// @brief insert node into queue
+        /// @param queue_element the node to insert
+        /// @param priority the priority of the node
+        /// @return true if the insertion succeeded
+        if (this->contains(queue_element))
+        {
+            this->queue.push_back(queue_element);
+        }
+        else
+        {
+            this->chgPrioirity(queue_element, priority);
+        }
         return true;
     }
 
     int top()
     {
-        // returns the top element of the queue.
+        /// @brief returns the top element of the queue and removes it.
+        /// @return the top element of the queue.
         return -1;
     }
 
@@ -259,9 +276,69 @@ class ShortestPath
  */
 {
 public:
-    ShortestPath(const Graph<T> &g) : graph(g) {}
+    ShortestPath(const Graph<T> &g, int u, int w) : graph(g),
+                                                    start(u),
+                                                    destination(w)
+    {
+        /// @param g the graph
+        /// @param u index of start node
+        /// @param w index of target node
+        this->calculate();
+    }
+
+    ShortestPath(const ShortestPath<T> &short_path) : graph(short_path.graph),
+                                                      start(short_path.start),
+                                                      destination(short_path.destination),
+                                                      short_path(short_path.short_path),
+                                                      cost(short_path.cost) {}
+
+    ShortestPath() : graph(Graph<T>()),
+                     start(0),
+                     destination(0)
+    {
+        this->calculate();
+    }
 
     ~ShortestPath() {}
+
+    Graph<T> getGraph()
+    {
+        /// @brief get the graph object of the path
+        /// @return the graph object
+        return this->graph;
+    }
+
+    int getStart()
+    {
+        /// @brief get the start node of the path
+        /// @return the start node
+        return this->start;
+    }
+
+    int getDestination()
+    {
+        /// @brief get the destination node of the path
+        /// @return the destination node
+        return this->destination;
+    }
+
+    bool setStart(int u)
+    {
+        /// @brief set the start node of the path
+        /// @param u index of node
+        /// @return true if the update succeeded
+        this->start = u;
+        return this->calculate();
+    }
+
+    bool setDestination(int w)
+    {
+        /// @brief set the destination node of the path
+        /// @param w index of node
+        /// @return true if the update succeeded
+        this->destination = w;
+        return this->calculate();
+    }
 
     vector<T> vertices()
     {
@@ -270,38 +347,76 @@ public:
         return this->graph.getVertices();
     }
 
-    vector<int> path(int u, int w)
+    vector<int> path()
     {
         /// @brief find shortest path between u-w
-        /// @param u index of start node
-        /// @param w index of target node
         /// @return the sequence of vertices representing shorest path u-v1-v2-…-vn-w.
-        PriorityQueue open_set;
-        open_set.Insert(u, 0);
-        vector<bool> closed_set = vector<bool>(this->vertices().size(), false);
-        int next = open_set.top();
-        for (int node : this->graph.neighbors(next))
-        {
-            int cost = this->graph.get_edge_value(u, next);
-        }
-        return vector<int>{0};
+        return this->short_path;
     }
 
-    int path_size(int u, int w)
+    int path_size()
     {
         /// @brief get the cost of the shortest path between u-w
-        /// @param u index of start node
-        /// @param w index of target node
         /// @return the path cost associated with the shortest path.
-        return 0;
+        return this->cost;
     }
+
+    template <class N>
+    friend ostream &operator<<(ostream &os, const ShortestPath<N> &short_path);
 
 private:
     Graph<T> graph;
-    PriorityQueue queue;
+    int start;
+    int destination;
+    vector<int> short_path;
+    int cost;
+
+    bool calculate()
+    {
+        PriorityQueue open_set;
+        vector<bool> closed_set = vector<bool>(this->vertices().size(), false);
+        closed_set.at(this->start) = true;
+        int next = this->start;
+        int current_cost = 0;
+        while (next != destination && count(closed_set.begin(), closed_set.end(), this->destination))
+        {
+            for (int node : this->graph.neighbors(next))
+            {
+                int cost = this->graph.get_edge_value(start, next);
+                open_set.Insert(node, cost + current_cost);
+            }
+            current_cost = open_set.minPrioirty();
+            next = open_set.top();
+        }
+        return true;
+    }
 };
 
-Graph<string> graph_generator(int nodecount, float density, int distance_range)
+template <class T>
+ostream &operator<<(ostream &os, ShortestPath<T> &short_path)
+{
+    /// @brief Output operator for Graph<T> class
+    /// @tparam T Type of the nodes of the graph
+    /// @param os output stream
+    /// @param short_path the shortest path to add to the output
+    /// @return output stream
+    os << "Distance from " << short_path.getStart() << " to ";
+    os << short_path.getDestination() << " is " << short_path.path_size() << endl;
+    os << "Path from " << short_path.getStart() << " to ";
+    os << short_path.getDestination() << " is ";
+    for (int node : short_path.path())
+    {
+        os << node << ". " << short_path.getGraph().get_node_value(node);
+        if (node != short_path.getDestination())
+        {
+            os << " -> ";
+        }
+    }
+    os << endl;
+    return os;
+}
+
+Graph<string> graph_generator(int nodecount, float density, unsigned distance_range)
 {
     /// @brief generates a graph with the given number of nodes and
     ///        approximately the given density
@@ -321,7 +436,7 @@ Graph<string> graph_generator(int nodecount, float density, int distance_range)
     {
         for (int j = 0; j < size; j++)
         {
-            if (i != j && ((static_cast<double>(rand()) / RAND_MAX) <= density))
+            if (i != j && ((static_cast<double>(rand()) / RAND_MAX) < density))
             {
                 testgraph.addEdge(i, j);
                 testgraph.addEdge(j, i);
@@ -335,9 +450,9 @@ Graph<string> graph_generator(int nodecount, float density, int distance_range)
 
 int main()
 {
-    Graph<string> testgraph = graph_generator(200, 0.0, 10);
-    cout << testgraph;
-    ShortestPath<string> path = ShortestPath<string>(testgraph);
-    cout << "Distance from 3 to 65 is " << path.path_size(3, 65) << endl;
+    Graph<string> testgraph = graph_generator(200, 0.01, 10);
+    cout << testgraph << endl;
+    ShortestPath<string> shortest_path = ShortestPath<string>(testgraph, 3, 65);
+    cout << shortest_path << endl;
     return 0;
 }
