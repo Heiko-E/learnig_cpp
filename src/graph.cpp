@@ -633,13 +633,19 @@ Graph<string> graph_generator(int nodecount, float density, unsigned distance_ra
 
 int main()
 {
-    Graph<string> testgraph = graph_generator(200, 0.01, 10);
+    // Graph with 50 nodes and 20% density
+    Graph<string> testgraph = graph_generator(50, 0.2, 10);
     cout << testgraph << endl;
-    ShortestPath<string> shortest_path = ShortestPath<string>(testgraph, 3, 65);
+    ShortestPath<string> shortest_path = ShortestPath<string>(testgraph, 3, 33);
     cout << shortest_path << endl;
     shortest_path.setStart(34);
     cout << shortest_path << endl;
-    shortest_path.setDestination(78);
+
+    // Graph with 50 nodes and 40% density
+    testgraph = graph_generator(50, 0.4, 10);
+    shortest_path = ShortestPath<string>(testgraph, 1, 6);
+    cout << testgraph << endl;
+    shortest_path.setDestination(45);
     cout << shortest_path << endl;
     return 0;
 }
