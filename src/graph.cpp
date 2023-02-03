@@ -9,204 +9,204 @@ class Graph
 /// @brief Data type for a graph.
 {
 public:
-    Graph() : vertices_(vector<T>(0)) {}
+  Graph() : vertices_(vector<T>(0)) {}
 
-    Graph(const vector<T> &vertices) : vertices_(vertices)
+  Graph(const vector<T> &vertices) : vertices_(vertices)
+  {
+    for (int node = 0; node < this->vertices_.size(); node++)
     {
-        for (int node = 0; node < this->vertices_.size(); node++)
-        {
-            this->edges_.insert(pair<int, map<int, int>>(node, map<int, int>()));
-        }
+      this->edges_.insert(pair<int, map<int, int>>(node, map<int, int>()));
     }
+  }
 
-    Graph(const Graph<T> &graph) : vertices_(graph.vertices_), edges_(graph.edges_) {}
+  Graph(const Graph<T> &graph) : vertices_(graph.vertices_), edges_(graph.edges_) {}
 
-    ~Graph() {}
+  ~Graph() {}
 
-    inline vector<T> vertices()
+  inline vector<T> vertices()
+  {
+    /// @brief get all nodes of the graph
+    /// @return all node values of the graph
+
+    return vector<T>(vertices_);
+  }
+
+  int order() const
+  {
+    /// @brief get the order of the graph
+    /// @return number of vertices of the graph
+
+    return this->vertices_.size();
+  }
+
+  float density() const
+  {
+    /// @brief density of the graph
+    /// @return density in the range [0..1]
+
+    int maxEdges = this->order() * (this->order() - 1);
+    int edgeCount = 0;
+    for (pair<int, map<int, int>> entry : this->edges_)
     {
-        /// @brief get all nodes of the graph
-        /// @return all node values of the graph
-
-        return vector<T>(vertices_);
+      edgeCount = edgeCount + entry.second.size();
     }
+    return static_cast<float>(edgeCount) / maxEdges;
+  }
 
-    int order() const
+  vector<int> neighbors(int x) const
+  {
+    /// @brief lists all nodes y such that there is an edge from x to y.
+    /// @param x index of starting node of the edge
+    /// @return all neighbors of the node
+
+    vector<int> neighbors;
+    if (0 <= x < this->order())
     {
-        /// @brief get the order of the graph
-        /// @return number of vertices of the graph
-
-        return this->vertices_.size();
+      for (pair<int, int> edge : this->edges_.at(x))
+      {
+        neighbors.push_back(edge.first);
+      }
     }
+    return neighbors;
+  }
 
-    float density() const
+  T getNodeValue(int x) const
+  {
+    /// @brief returns the value associated with the node idx.
+    /// @param x index of the node
+    /// @return value of the node
+
+    if (0 <= x < this->order())
     {
-        /// @brief density of the graph
-        /// @return density in the range [0..1]
-
-        int maxEdges = this->order() * (this->order() - 1);
-        int edgeCount = 0;
-        for (pair<int, map<int, int>> entry : this->edges_)
-        {
-            edgeCount = edgeCount + entry.second.size();
-        }
-        return static_cast<float>(edgeCount) / maxEdges;
+      return this->vertices_.at(x);
     }
+    return NULL;
+  }
 
-    vector<int> neighbors(int x) const
+  bool setNodeValue(int x, const T &node)
+  {
+    /// @brief sets the value associated with the node idx to a.
+    /// @param x index of the node
+    /// @param node new value of the node
+    /// @return true if the node was successfully updated
+
+    if (0 <= x < this->order())
     {
-        /// @brief lists all nodes y such that there is an edge from x to y.
-        /// @param x index of starting node of the edge
-        /// @return all neighbors of the node
-
-        vector<int> neighbors;
-        if (0 <= x < this->order())
-        {
-            for (pair<int, int> edge : this->edges_.at(x))
-            {
-                neighbors.push_back(edge.first);
-            }
-        }
-        return neighbors;
+      this->vertices_.at(x) = node;
+      return true;
     }
+    return false;
+  }
 
-    T getNodeValue(int x) const
+  bool addEdge(int x, int y)
+  {
+    /// @brief adds to the graph the edge from x to y, if it is not there.
+    /// @param x index of start node of the edge
+    /// @param y index of end node of the edge
+    /// @return true if the edge was successfully added
+
+    if (!this->adjacent(x, y) && 0 <= y < this->order())
     {
-        /// @brief returns the value associated with the node idx.
-        /// @param x index of the node
-        /// @return value of the node
-
-        if (0 <= x < this->order())
-        {
-            return this->vertices_.at(x);
-        }
-        return NULL;
+      this->edges_.at(x).insert(pair<int, int>(y, 1));
+      return true;
     }
+    return false;
+  }
 
-    bool setNodeValue(int x, const T &node)
+  bool deleteEdge(int x, int y)
+  {
+    /// @brief removes the edge from x to y, if it is there.
+    /// @param x index of start node of the edge
+    /// @param y index of end node of the edge
+    /// @return true if the edge was successfully deleted
+
+    if (this->adjacent(x, y))
     {
-        /// @brief sets the value associated with the node idx to a.
-        /// @param x index of the node
-        /// @param node new value of the node
-        /// @return true if the node was successfully updated
-
-        if (0 <= x < this->order())
-        {
-            this->vertices_.at(x) = node;
-            return true;
-        }
-        return false;
+      this->edges_.at(x).erase(y);
     }
+    return true;
+  }
 
-    bool addEdge(int x, int y)
+  int getEdgeValue(int x, int y) const
+  {
+    /// @brief returns the value associated to the edge (x,y).
+    /// @param x index of start node of the edge
+    /// @param y index of end node of the edge
+    /// @return value of the edge
+
+    if (this->adjacent(x, y))
     {
-        /// @brief adds to the graph the edge from x to y, if it is not there.
-        /// @param x index of start node of the edge
-        /// @param y index of end node of the edge
-        /// @return true if the edge was successfully added
-
-        if (!this->adjacent(x, y) && 0 <= y < this->order())
-        {
-            this->edges_.at(x).insert(pair<int, int>(y, 1));
-            return true;
-        }
-        return false;
+      return this->edges_.at(x).at(y);
     }
+    return -1;
+  }
 
-    bool deleteEdge(int x, int y)
+  bool setEdgeValue(int x, int y, int v)
+  {
+    /// @brief sets the value associated to the edge (x,y) to v.
+    /// @param x index of start node of the edge
+    /// @param y index of end node of the edge
+    /// @param v new value of the edge
+    /// @return true if value is succefully updated
+
+    if (this->adjacent(x, y))
     {
-        /// @brief removes the edge from x to y, if it is there.
-        /// @param x index of start node of the edge
-        /// @param y index of end node of the edge
-        /// @return true if the edge was successfully deleted
-
-        if (this->adjacent(x, y))
-        {
-            this->edges_.at(x).erase(y);
-        }
-        return true;
+      this->edges_.at(x).at(y) = v;
+      return true;
     }
+    return false;
+  }
 
-    int getEdgeValue(int x, int y) const
-    {
-        /// @brief returns the value associated to the edge (x,y).
-        /// @param x index of start node of the edge
-        /// @param y index of end node of the edge
-        /// @return value of the edge
+  bool adjacent(int x, int y) const
+  {
+    /// @brief tests whether there is an edge from node x to node y.
+    /// @param x index of start node
+    /// @param y index of end node of the edge
+    /// @return true if there is a edge
 
-        if (this->adjacent(x, y))
-        {
-            return this->edges_.at(x).at(y);
-        }
-        return -1;
-    }
+    return this->edges_.count(x) && this->edges_.at(x).count(y);
+  }
 
-    bool setEdgeValue(int x, int y, int v)
-    {
-        /// @brief sets the value associated to the edge (x,y) to v.
-        /// @param x index of start node of the edge
-        /// @param y index of end node of the edge
-        /// @param v new value of the edge
-        /// @return true if value is succefully updated
-
-        if (this->adjacent(x, y))
-        {
-            this->edges_.at(x).at(y) = v;
-            return true;
-        }
-        return false;
-    }
-
-    bool adjacent(int x, int y) const
-    {
-        /// @brief tests whether there is an edge from node x to node y.
-        /// @param x index of start node
-        /// @param y index of end node of the edge
-        /// @return true if there is a edge
-
-        return this->edges_.count(x) && this->edges_.at(x).count(y);
-    }
-
-    template <class N>
-    friend ostream &operator<<(ostream &os, const Graph<N> &graph);
+  template <class N>
+  friend ostream &operator<<(ostream &os, const Graph<N> &graph);
 
 private:
-    /* All node values of the graph. The index in the vectoris used as a reference.
-     */
-    vector<T> vertices_;
-    /*Edges are stored in a map to enablefast lookup if the starting node is given.
-    - Key is the start node
-    - All nodes that arre the end point of a edge are stored in a end point map
-        - Key is the index in the end node,
-        - Value is the value of the edge
-    */
-    map<int, map<int, int>> edges_;
+  /* All node values of the graph. The index in the vectoris used as a reference.
+   */
+  vector<T> vertices_;
+  /*Edges are stored in a map to enablefast lookup if the starting node is given.
+  - Key is the start node
+  - All nodes that arre the end point of a edge are stored in a end point map
+      - Key is the index in the end node,
+      - Value is the value of the edge
+  */
+  map<int, map<int, int>> edges_;
 };
 
 template <class T>
 ostream &operator<<(ostream &os, const Graph<T> &graph)
 {
-    /// @brief Output operator for Graph<T> class
-    /// @tparam T Type of the nodes of the graph
-    /// @param os output stream
-    /// @param graph the graph object to add to the output
-    /// @return output stream
+  /// @brief Output operator for Graph<T> class
+  /// @tparam T Type of the nodes of the graph
+  /// @param os output stream
+  /// @param graph the graph object to add to the output
+  /// @return output stream
 
-    os << "Graph of order " << graph.order();
-    os << " with density " << graph.density() << endl;
-    os << "- Nodes:" << endl;
-    for (int node = 0; node < graph.order(); node++)
+  os << "Graph of order " << graph.order();
+  os << " with density " << graph.density() << endl;
+  os << "- Nodes:" << endl;
+  for (int node = 0; node < graph.order(); node++)
+  {
+    os << "  [Id: " << node << " Data: " << graph.getNodeValue(node) << "]";
+    for (int neighbor : graph.neighbors(node))
     {
-        os << "  [Id: " << node << " Data: " << graph.getNodeValue(node) << "]";
-        for (int neighbor : graph.neighbors(node))
-        {
-            os << " ->" << graph.getNodeValue(neighbor);
-            os << "(" << graph.getEdgeValue(node, neighbor) << ") ";
-        }
-        os << endl;
+      os << " ->" << graph.getNodeValue(neighbor);
+      os << "(" << graph.getEdgeValue(node, neighbor) << ") ";
     }
     os << endl;
-    return os;
+  }
+  os << endl;
+  return os;
 }
 
 template <class T>
@@ -216,210 +216,210 @@ class PriorityQueue
 
 {
 public:
-    PriorityQueue() {}
+  PriorityQueue() {}
 
-    ~PriorityQueue() {}
+  ~PriorityQueue() {}
 
-    bool setMinPrioirity(const T &queueElement, int priority)
+  bool setMinPrioirity(const T &queueElement, int priority)
+  {
+    /// @brief changes the priority and path of a queue element to the minimum.
+    /// @param queueElement the element to change
+    /// @param priority the new priority
+    /// @return true if the update succeeded
+
+    typename list<pair<T, int>>::iterator it;
+    for (it = this->queue_.begin(); it != this->queue_.end(); it++)
     {
-        /// @brief changes the priority and path of a queue element to the minimum.
-        /// @param queueElement the element to change
-        /// @param priority the new priority
-        /// @return true if the update succeeded
-
-        typename list<pair<T, int>>::iterator it;
-        for (it = this->queue_.begin(); it != this->queue_.end(); it++)
+      if (it->first == queueElement)
+      {
+        if (it->second > priority)
         {
-            if (it->first == queueElement)
-            {
-                if (it->second > priority)
-                {
-                    it->second = priority;
-                    it->first = queueElement;
-                    this->queue_.sort([](pair<T, int> a, pair<T, int> b)
-                                      { return a.second < b.second; });
-                    return true;
-                }
-                return false;
-            }
+          it->second = priority;
+          it->first = queueElement;
+          this->queue_.sort([](pair<T, int> a, pair<T, int> b)
+                            { return a.second < b.second; });
+          return true;
         }
         return false;
+      }
     }
+    return false;
+  }
 
-    int minPrioirty()
+  int minPrioirty()
+  {
+    /// @brief priority of the top element of the queue.
+    /// @return the pririty of the top element.
+    return this->queue_.front().second;
+  }
+
+  bool contains(const T &queueElement)
+  {
+    /// @brief does the queue contains the element.
+    /// @param queueElement the element to look for
+    /// @return true if element is in the queue
+
+    for (pair<T, int> element : this->queue_)
     {
-        /// @brief priority of the top element of the queue.
-        /// @return the pririty of the top element.
-        return this->queue_.front().second;
-    }
-
-    bool contains(const T &queueElement)
-    {
-        /// @brief does the queue contains the element.
-        /// @param queueElement the element to look for
-        /// @return true if element is in the queue
-
-        for (pair<T, int> element : this->queue_)
-        {
-            if (element.first == queueElement)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    bool insert(const T &queueElement, int priority)
-    {
-        /// @brief insert node into queue
-        /// @param queueElement the node to insert
-        /// @param priority the priority of the node
-        /// @return true if the insertion succeeded
-
-        typename list<pair<T, int>>::iterator it;
-        if (this->contains(queueElement))
-        {
-            return this->setMinPrioirity(queueElement, priority);
-        }
-        else
-        {
-            for (it = this->queue_.begin(); it != this->queue_.end(); it++)
-            {
-                if (it->second > priority)
-                {
-                    this->queue_.insert(it, pair<T, int>(queueElement, priority));
-                    return true;
-                }
-            }
-        }
-        this->queue_.push_back(pair<T, int>(queueElement, priority));
+      if (element.first == queueElement)
+      {
         return true;
+      }
     }
+    return false;
+  }
 
-    T popTop()
+  bool insert(const T &queueElement, int priority)
+  {
+    /// @brief insert node into queue
+    /// @param queueElement the node to insert
+    /// @param priority the priority of the node
+    /// @return true if the insertion succeeded
+
+    typename list<pair<T, int>>::iterator it;
+    if (this->contains(queueElement))
     {
-        /// @brief returns the top element of the queue and removes it.
-        /// @return the top element of the queue.
-
-        pair<T, int> element = this->queue_.front();
-        this->queue_.pop_front();
-        return element.first;
+      return this->setMinPrioirity(queueElement, priority);
     }
-
-    int size()
+    else
     {
-        /// @brief get the number of queue_elements
-        /// @return number of queue_elements
+      for (it = this->queue_.begin(); it != this->queue_.end(); it++)
+      {
+        if (it->second > priority)
+        {
+          this->queue_.insert(it, pair<T, int>(queueElement, priority));
+          return true;
+        }
+      }
+    }
+    this->queue_.push_back(pair<T, int>(queueElement, priority));
+    return true;
+  }
 
-        return this->queue_.size();
-    };
+  T popTop()
+  {
+    /// @brief returns the top element of the queue and removes it.
+    /// @return the top element of the queue.
 
-    template <class N>
-    friend ostream &operator<<(ostream &os, const PriorityQueue<T> &queue);
+    pair<T, int> element = this->queue_.front();
+    this->queue_.pop_front();
+    return element.first;
+  }
+
+  int size()
+  {
+    /// @brief get the number of queue_elements
+    /// @return number of queue_elements
+
+    return this->queue_.size();
+  };
+
+  template <class N>
+  friend ostream &operator<<(ostream &os, const PriorityQueue<T> &queue);
 
 private:
-    /// @brief each queue element is a pair of the element and its current priority
-    list<pair<T, int>> queue_;
+  /// @brief each queue element is a pair of the element and its current priority
+  list<pair<T, int>> queue_;
 };
 
 template <class T>
 ostream &operator<<(ostream &os, const PriorityQueue<T> &queue)
 {
-    /// @brief Output operator for PriorityQueue<T> class
-    /// @tparam T Type of the queue elements
-    /// @param os output stream
-    /// @param queue the queue element to add to the output
-    /// @return output stream
+  /// @brief Output operator for PriorityQueue<T> class
+  /// @tparam T Type of the queue elements
+  /// @param os output stream
+  /// @param queue the queue element to add to the output
+  /// @return output stream
 
-    os << "Queue with elements: " << endl;
-    for (pair<T, int> element : queue.queue_)
-    {
-        os << "Priority: " << element.second << " Data: " << element.first << endl;
-    }
-    return os;
+  os << "Queue with elements: " << endl;
+  for (pair<T, int> element : queue.queue_)
+  {
+    os << "Priority: " << element.second << " Data: " << element.first << endl;
+  }
+  return os;
 }
 
 class SetElement
 {
-    /// @brief class to hold information about a node in a graph and path how it is reachable
+  /// @brief class to hold information about a node in a graph and path how it is reachable
 public:
-    SetElement() {}
+  SetElement() {}
 
-    SetElement(const SetElement &ele) : node_(ele.node_),
-                                        path_(ele.path_) {}
+  SetElement(const SetElement &ele) : node_(ele.node_),
+                                      path_(ele.path_) {}
 
-    SetElement(int node, const vector<int> &path) : node_(node),
-                                                    path_(path) {}
+  SetElement(int node, const vector<int> &path) : node_(node),
+                                                  path_(path) {}
 
-    ~SetElement() {}
+  ~SetElement() {}
 
-    inline int node() const
-    {
-        /// @brief get the destination node of this element
-        /// @return node index
+  inline int node() const
+  {
+    /// @brief get the destination node of this element
+    /// @return node index
 
-        return this->node_;
-    }
+    return this->node_;
+  }
 
-    inline vector<int> path() const
-    {
-        /// @brief get the current path to the node
-        /// @return path as list of nodes
+  inline vector<int> path() const
+  {
+    /// @brief get the current path to the node
+    /// @return path as list of nodes
 
-        return this->path_;
-    }
+    return this->path_;
+  }
 
-    friend ostream &operator<<(ostream &os, const SetElement &set);
-    friend bool operator==(const SetElement &set1, const SetElement &set2);
-    friend bool operator!=(const SetElement &set1, const SetElement &set2);
+  friend ostream &operator<<(ostream &os, const SetElement &set);
+  friend bool operator==(const SetElement &set1, const SetElement &set2);
+  friend bool operator!=(const SetElement &set1, const SetElement &set2);
 
 private:
-    /// @brief destination node
-    int node_;
-    /// @brief path to the destination node
-    vector<int> path_;
+  /// @brief destination node
+  int node_;
+  /// @brief path to the destination node
+  vector<int> path_;
 };
 
 bool operator==(const SetElement &set1, const SetElement &set2)
 {
-    /// @brief Compare operator for equality of two SetElement objects
-    /// @param set1 SetElement object 1
-    /// @param set2 SetElement object 2
-    /// @return True if the destination nodes of both elements are equal
+  /// @brief Compare operator for equality of two SetElement objects
+  /// @param set1 SetElement object 1
+  /// @param set2 SetElement object 2
+  /// @return True if the destination nodes of both elements are equal
 
-    return (set1.node() == set2.node());
+  return (set1.node() == set2.node());
 }
 
 bool operator!=(const SetElement &set1, const SetElement &set2)
 {
-    /// @brief Compare operator for non equality of two SetElement objects
-    /// @param set1 SetElement object 1
-    /// @param set2 SetElement object 2
-    /// @return True if the destination nodes of both elements are not equal
+  /// @brief Compare operator for non equality of two SetElement objects
+  /// @param set1 SetElement object 1
+  /// @param set2 SetElement object 2
+  /// @return True if the destination nodes of both elements are not equal
 
-    return (set1.node() != set2.node());
+  return (set1.node() != set2.node());
 }
 
 ostream &operator<<(ostream &os, const SetElement &set)
 {
-    /// @brief Output operator for Graph<T> class
-    /// @param os output stream
-    /// @param set the set element to add to the output
-    /// @return output stream
+  /// @brief Output operator for Graph<T> class
+  /// @param os output stream
+  /// @param set the set element to add to the output
+  /// @return output stream
 
-    os << "Node: " << set.node() << endl;
-    os << "Path: ";
-    vector<int> path = set.path();
-    for (int node : path)
+  os << "Node: " << set.node() << endl;
+  os << "Path: ";
+  vector<int> path = set.path();
+  for (int node : path)
+  {
+    os << node;
+    if (node != path.at(path.size() - 1))
     {
-        os << node;
-        if (node != path.at(path.size() - 1))
-        {
-            os << " -> ";
-        }
+      os << " -> ";
     }
-    os << endl;
-    return os;
+  }
+  os << endl;
+  return os;
 }
 
 template <class T>
@@ -429,223 +429,223 @@ class ShortestPath
  */
 {
 public:
-    ShortestPath(const Graph<T> &g, int u, int w) : graph_(g),
-                                                    start_(u),
-                                                    destination_(w)
-    {
-        /// @param g the graph
-        /// @param u index of start node
-        /// @param w index of target node
-        this->calculate();
-    }
+  ShortestPath(const Graph<T> &g, int u, int w) : graph_(g),
+                                                  start_(u),
+                                                  destination_(w)
+  {
+    /// @param g the graph
+    /// @param u index of start node
+    /// @param w index of target node
+    this->calculate();
+  }
 
-    ShortestPath(const ShortestPath<T> &short_path) : graph_(short_path.graph_),
-                                                      start_(short_path.start_),
-                                                      destination_(short_path.destination_),
-                                                      path_(short_path.path_),
-                                                      cost_(short_path.cost_) {}
+  ShortestPath(const ShortestPath<T> &short_path) : graph_(short_path.graph_),
+                                                    start_(short_path.start_),
+                                                    destination_(short_path.destination_),
+                                                    path_(short_path.path_),
+                                                    cost_(short_path.cost_) {}
 
-    ShortestPath() : graph_(Graph<T>()),
-                     start_(0),
-                     destination_(0)
-    {
-        this->calculate();
-    }
+  ShortestPath() : graph_(Graph<T>()),
+                   start_(0),
+                   destination_(0)
+  {
+    this->calculate();
+  }
 
-    ~ShortestPath() {}
+  ~ShortestPath() {}
 
-    Graph<T> graph() const
-    {
-        /// @brief get the graph object of the path
-        /// @return the graph object
+  Graph<T> graph() const
+  {
+    /// @brief get the graph object of the path
+    /// @return the graph object
 
-        return this->graph_;
-    }
+    return this->graph_;
+  }
 
-    int start() const
-    {
-        /// @brief get the start node of the path
-        /// @return the start node
+  int start() const
+  {
+    /// @brief get the start node of the path
+    /// @return the start node
 
-        return this->start_;
-    }
+    return this->start_;
+  }
 
-    int destination() const
-    {
-        /// @brief get the destination node of the path
-        /// @return the destination node
+  int destination() const
+  {
+    /// @brief get the destination node of the path
+    /// @return the destination node
 
-        return this->destination_;
-    }
+    return this->destination_;
+  }
 
-    bool setStart(int u)
-    {
-        /// @brief set the start node of the path
-        /// @param u index of node
-        /// @return true if the update succeeded
+  bool setStart(int u)
+  {
+    /// @brief set the start node of the path
+    /// @param u index of node
+    /// @return true if the update succeeded
 
-        this->start_ = u;
-        return this->calculate();
-    }
+    this->start_ = u;
+    return this->calculate();
+  }
 
-    bool setDestination(int w)
-    {
-        /// @brief set the destination node of the path
-        /// @param w index of node
-        /// @return true if the update succeeded
+  bool setDestination(int w)
+  {
+    /// @brief set the destination node of the path
+    /// @param w index of node
+    /// @return true if the update succeeded
 
-        this->destination_ = w;
-        return this->calculate();
-    }
+    this->destination_ = w;
+    return this->calculate();
+  }
 
-    vector<T> vertices()
-    {
-        /// @brief list of vertices in G(V,E).
-        /// @return the vertices
+  vector<T> vertices()
+  {
+    /// @brief list of vertices in G(V,E).
+    /// @return the vertices
 
-        return this->graph_.vertices();
-    }
+    return this->graph_.vertices();
+  }
 
-    vector<int> path() const
-    {
-        /// @brief find shortest path between u-w
-        /// @return the sequence of vertices representing shorest path u-v1-v2-…-vn-w.
+  vector<int> path() const
+  {
+    /// @brief find shortest path between u-w
+    /// @return the sequence of vertices representing shorest path u-v1-v2-…-vn-w.
 
-        return this->path_;
-    }
+    return this->path_;
+  }
 
-    int pathSize() const
-    {
-        /// @brief get the cost of the shortest path between u-w
-        /// @return the path cost associated with the shortest path.
+  int pathSize() const
+  {
+    /// @brief get the cost of the shortest path between u-w
+    /// @return the path cost associated with the shortest path.
 
-        return this->cost_;
-    }
+    return this->cost_;
+  }
 
-    template <class N>
-    friend ostream &operator<<(ostream &os, const ShortestPath<N> &shortPath);
+  template <class N>
+  friend ostream &operator<<(ostream &os, const ShortestPath<N> &shortPath);
 
 private:
-    Graph<T> graph_;
-    int start_;
-    int destination_;
-    vector<int> path_;
-    int cost_;
+  Graph<T> graph_;
+  int start_;
+  int destination_;
+  vector<int> path_;
+  int cost_;
 
-    bool calculate()
+  bool calculate()
+  {
+    /// @brief calculate the shortest path vector and the cost of this path
+    /// @return True if calculation was succeeded
+
+    PriorityQueue<SetElement> openSet;
+    vector<bool> closedSet = vector<bool>(this->vertices().size(), false);
+    int currentCost = 0;
+    vector<int> currentPath = vector<int>{this->start_};
+    int nextNode = this->start_;
+    while (nextNode != destination_ && count(closedSet.begin(), closedSet.end(), false))
     {
-        /// @brief calculate the shortest path vector and the cost of this path
-        /// @return True if calculation was succeeded
-
-        PriorityQueue<SetElement> openSet;
-        vector<bool> closedSet = vector<bool>(this->vertices().size(), false);
-        int currentCost = 0;
-        vector<int> currentPath = vector<int>{this->start_};
-        int nextNode = this->start_;
-        while (nextNode != destination_ && count(closedSet.begin(), closedSet.end(), false))
+      closedSet.at(nextNode) = true;
+      for (int node : this->graph_.neighbors(nextNode))
+      {
+        if (closedSet.at(node))
         {
-            closedSet.at(nextNode) = true;
-            for (int node : this->graph_.neighbors(nextNode))
-            {
-                if (closedSet.at(node))
-                {
-                    continue;
-                }
-                int cost = this->graph_.getEdgeValue(nextNode, node);
-                vector<int> nodePath = vector<int>(currentPath);
-                nodePath.push_back(node);
-                openSet.insert(SetElement(node, nodePath), cost + currentCost);
-            }
-            currentCost = openSet.minPrioirty();
-            SetElement element = openSet.popTop();
-            currentPath = element.path();
-            nextNode = element.node();
+          continue;
         }
-        if (nextNode == destination_)
-        {
-            this->cost_ = currentCost;
-            this->path_ = currentPath;
-            return true;
-        }
-        this->cost_ = -1;
-        this->path_ = vector<int>();
-        return false;
+        int cost = this->graph_.getEdgeValue(nextNode, node);
+        vector<int> nodePath = vector<int>(currentPath);
+        nodePath.push_back(node);
+        openSet.insert(SetElement(node, nodePath), cost + currentCost);
+      }
+      currentCost = openSet.minPrioirty();
+      SetElement element = openSet.popTop();
+      currentPath = element.path();
+      nextNode = element.node();
     }
+    if (nextNode == destination_)
+    {
+      this->cost_ = currentCost;
+      this->path_ = currentPath;
+      return true;
+    }
+    this->cost_ = -1;
+    this->path_ = vector<int>();
+    return false;
+  }
 };
 
 template <class T>
 ostream &operator<<(ostream &os, const ShortestPath<T> &shortPath)
 {
-    /// @brief Output operator for Graph<T> class
-    /// @tparam T Type of the nodes of the graph
-    /// @param os output stream
-    /// @param shortPath the shortest path to add to the output
-    /// @return output stream
+  /// @brief Output operator for Graph<T> class
+  /// @tparam T Type of the nodes of the graph
+  /// @param os output stream
+  /// @param shortPath the shortest path to add to the output
+  /// @return output stream
 
-    os << "Distance from " << shortPath.start() << " to ";
-    os << shortPath.destination() << " is " << shortPath.pathSize() << endl;
-    os << "Shortest path from " << shortPath.start() << " to ";
-    os << shortPath.destination() << " is ";
-    for (int node : shortPath.path())
+  os << "Distance from " << shortPath.start() << " to ";
+  os << shortPath.destination() << " is " << shortPath.pathSize() << endl;
+  os << "Shortest path from " << shortPath.start() << " to ";
+  os << shortPath.destination() << " is ";
+  for (int node : shortPath.path())
+  {
+    os << node;
+    if (node != shortPath.destination())
     {
-        os << node;
-        if (node != shortPath.destination())
-        {
-            os << " -> ";
-        }
+      os << " -> ";
     }
-    os << endl;
-    return os;
+  }
+  os << endl;
+  return os;
 }
 
 Graph<string> graph_generator(int nodecount, float density, unsigned distance_range)
 {
-    /// @brief generates a graph with the given number of nodes and
-    ///        approximately the given density
-    /// @param nodecount number of nodes
-    /// @param density requested densityin the range [0..1]
-    /// @param distance_range max distance value of an edge
-    /// @return the generated graph object
+  /// @brief generates a graph with the given number of nodes and
+  ///        approximately the given density
+  /// @param nodecount number of nodes
+  /// @param density requested densityin the range [0..1]
+  /// @param distance_range max distance value of an edge
+  /// @return the generated graph object
 
-    srand(static_cast<unsigned>(time(NULL)));
-    vector<string> nodes;
-    for (int i = 0; i < nodecount; i++)
+  srand(static_cast<unsigned>(time(NULL)));
+  vector<string> nodes;
+  for (int i = 0; i < nodecount; i++)
+  {
+    nodes.push_back(to_string(i));
+  }
+  Graph<string> testgraph = Graph<string>(nodes);
+  int size = testgraph.order();
+  for (int i = 0; i < size; i++)
+  {
+    for (int j = 0; j < size; j++)
     {
-        nodes.push_back(to_string(i));
+      if (i != j && ((static_cast<double>(rand()) / RAND_MAX) < density))
+      {
+        testgraph.addEdge(i, j);
+        testgraph.addEdge(j, i);
+        testgraph.setEdgeValue(i, j, (rand() % (distance_range - 1)) + 1);
+        testgraph.setEdgeValue(j, i, (rand() % (distance_range - 1)) + 1);
+      }
     }
-    Graph<string> testgraph = Graph<string>(nodes);
-    int size = testgraph.order();
-    for (int i = 0; i < size; i++)
-    {
-        for (int j = 0; j < size; j++)
-        {
-            if (i != j && ((static_cast<double>(rand()) / RAND_MAX) < density))
-            {
-                testgraph.addEdge(i, j);
-                testgraph.addEdge(j, i);
-                testgraph.setEdgeValue(i, j, rand() % distance_range);
-                testgraph.setEdgeValue(j, i, rand() % distance_range);
-            }
-        }
-    }
-    return testgraph;
+  }
+  return testgraph;
 }
 
 int main()
 {
-    // Graph with 50 nodes and 20% density
-    Graph<string> testgraph = graph_generator(50, 0.2, 10);
-    cout << testgraph << endl;
-    ShortestPath<string> shortest_path = ShortestPath<string>(testgraph, 3, 33);
-    cout << shortest_path << endl;
-    shortest_path.setStart(34);
-    cout << shortest_path << endl;
+  // Graph with 50 nodes and 20% density
+  Graph<string> testgraph = graph_generator(50, 0.2, 10);
+  cout << testgraph << endl;
+  ShortestPath<string> shortest_path = ShortestPath<string>(testgraph, 3, 33);
+  cout << shortest_path << endl;
+  shortest_path.setStart(34);
+  cout << shortest_path << endl;
 
-    // Graph with 50 nodes and 40% density
-    testgraph = graph_generator(50, 0.4, 10);
-    shortest_path = ShortestPath<string>(testgraph, 1, 6);
-    cout << testgraph << endl;
-    shortest_path.setDestination(45);
-    cout << shortest_path << endl;
-    return 0;
+  // Graph with 50 nodes and 40% density
+  testgraph = graph_generator(50, 0.4, 10);
+  shortest_path = ShortestPath<string>(testgraph, 1, 6);
+  cout << testgraph << endl;
+  shortest_path.setDestination(45);
+  cout << shortest_path << endl;
+  return 0;
 }
