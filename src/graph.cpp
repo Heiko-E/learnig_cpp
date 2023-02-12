@@ -146,6 +146,8 @@ public:
   TreeNode(int node, const vector<TreeNode> &destinations) : node_(node),
                                                              destinations_(destinations) {}
 
+  TreeNode(int node) : node_(node) {}
+
   ~TreeNode() {}
 
   inline int node() const
@@ -164,7 +166,19 @@ public:
     return this->destinations_;
   }
 
+  bool addDestination(const TreeNode &node)
+  {
+    /// @brief Adds a reachable node
+    /// @param node TreeNode to add
+    /// @return True if succedded
+
+    this->destinations_.push_back(node);
+    return true;
+  }
+
   friend ostream &operator<<(ostream &os, const TreeNode &set);
+  friend bool operator==(const TreeNode &set1, const TreeNode &set2);
+  friend bool operator!=(const TreeNode &set1, const TreeNode &set2);
 
 private:
   /// @brief source node
@@ -187,6 +201,26 @@ ostream &operator<<(ostream &os, const TreeNode &node)
   }
   os << ")";
   return os;
+}
+
+bool operator==(const TreeNode &set1, const TreeNode &set2)
+{
+  /// @brief Compare operator for equality of two TreeNode objects
+  /// @param set1 TreeNode object 1
+  /// @param set2 TreeNode object 2
+  /// @return True if the destination nodes of both elements are equal
+
+  return (set1.node() == set2.node());
+}
+
+bool operator!=(const TreeNode &set1, const TreeNode &set2)
+{
+  /// @brief Compare operator for non equality of twoTreeNode objects
+  /// @param set1 TreeNode object 1
+  /// @param set2 TreeNode object 2
+  /// @return True if the destination nodes of both elements are not equal
+
+  return (set1.node() != set2.node());
 }
 
 template <class T>
@@ -383,20 +417,21 @@ public:
     /// @brief Prim's algorithm to get minimum spanning tree
 
     pair<int, TreeNode> result;
-    result.first = -1;
+    result.first = 0;
     map<int, TreeNode> forest;
-    PriorityQueue<pair<int, int>> sortedEdges;
-    for (auto edge : this->edges_)
-    {
-      int source = edge.first;
+    PriorityQueue<pair<TreeNode, TreeNode>> sortedEdges;
+    TreeNode source(0);
 
-      for (auto targetEdge : edge.second)
-      {
-        int target = targetEdge.first;
-        int cost = targetEdge.second;
-        sortedEdges.insert(pair(source, target), cost);
-      }
+    for (auto targetEdge : this->edges_.at(0))
+    {
+      TreeNode target = TreeNode(targetEdge.first);
+      int cost = targetEdge.second;
+      sortedEdges.insert(pair(source, TreeNode(target)), cost);
     }
+    result.first = result.first = +sortedEdges.minPrioirty();
+    auto min = sortedEdges.popTop();
+    source = min.first;
+    source.addDestination(min.second);
 
     return result;
   }
