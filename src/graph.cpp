@@ -46,7 +46,7 @@ public:
 
     int maxEdges = this->order() * (this->order() - 1);
     int edgeCount = 0;
-    for (pair<int, map<int, int>> entry : this->edges_)
+    for (auto entry : this->edges_)
     {
       edgeCount = edgeCount + entry.second.size();
     }
@@ -62,7 +62,7 @@ public:
     vector<int> neighbors;
     if (0 <= x < this->order())
     {
-      for (pair<int, int> edge : this->edges_.at(x))
+      for (auto edge : this->edges_.at(x))
       {
         neighbors.push_back(edge.first);
       }
@@ -259,7 +259,7 @@ public:
     /// @param queueElement the element to look for
     /// @return true if element is in the queue
 
-    for (pair<T, int> element : this->queue_)
+    for (auto element : this->queue_)
     {
       if (element.first == queueElement)
       {
@@ -276,14 +276,13 @@ public:
     /// @param priority the priority of the node
     /// @return true if the insertion succeeded
 
-    typename list<pair<T, int>>::iterator it;
     if (this->contains(queueElement))
     {
       return this->setMinPrioirity(queueElement, priority);
     }
     else
     {
-      for (it = this->queue_.begin(); it != this->queue_.end(); it++)
+      for (auto it = this->queue_.begin(); it != this->queue_.end(); it++)
       {
         if (it->second > priority)
         {
@@ -332,7 +331,7 @@ ostream &operator<<(ostream &os, const PriorityQueue<T> &queue)
   /// @return output stream
 
   os << "Queue with elements: " << endl;
-  for (pair<T, int> element : queue.queue_)
+  for (auto element : queue.queue_)
   {
     os << "Priority: " << element.second << " Data: " << element.first << endl;
   }
@@ -622,9 +621,7 @@ Graph<string> graph_generator(int nodecount, float density, unsigned distance_ra
       if (i != j && ((static_cast<double>(rand()) / RAND_MAX) < density))
       {
         testgraph.addEdge(i, j);
-        testgraph.addEdge(j, i);
         testgraph.setEdgeValue(i, j, (rand() % (distance_range - 1)) + 1);
-        testgraph.setEdgeValue(j, i, (rand() % (distance_range - 1)) + 1);
       }
     }
   }
