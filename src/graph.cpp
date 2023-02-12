@@ -194,12 +194,20 @@ ostream &operator<<(ostream &os, const TreeNode &node)
   /// @param node the node element to add to the output
   /// @return output stream
 
-  os << "(" << node.node_ << ",";
-  for (auto dest : node.destinations_)
+  if (node.destinations_.size() == 0)
   {
-    os << dest;
+    os << node.node_;
   }
-  os << ")";
+  else
+  {
+    os << "(" << node.node_;
+    for (auto dest : node.destinations_)
+    {
+      os << "," << dest;
+    }
+    os << ")";
+  }
+
   return os;
 }
 
@@ -416,24 +424,35 @@ public:
   {
     /// @brief Prim's algorithm to get minimum spanning tree
 
-    pair<int, TreeNode> result;
-    result.first = 0;
-    map<int, TreeNode> forest;
-    PriorityQueue<pair<TreeNode, TreeNode>> sortedEdges;
-    TreeNode source(0);
-
-    for (auto targetEdge : this->edges_.at(0))
+    vector<bool> closedSet = vector<bool>(this->vertices_.size(), false);
+    PriorityQueue<pair<int, int>> sortedEdges;
+    int currentNode = 0;
+    int cost = 0;
+    map<int, set<int>> nodes;
+    nodes.insert(pair<int, set<int>>(currentNode, set<int>()));
+    while (count(closedSet.begin(), closedSet.end(), false))
     {
-      TreeNode target = TreeNode(targetEdge.first);
-      int cost = targetEdge.second;
-      sortedEdges.insert(pair(source, TreeNode(target)), cost);
+      closedSet.at(currentNode) = true;
+      for (auto edge : this->edges_.at(currentNode))
+        sortedEdges.insert(pair(currentNode, edge.first),
+                           edge.second);
+      int edgeCost = -1;
+      pair<int, int> min;
+      while (sortedEdges.size() > 0 && closedSet.at(min.second))
+      {
+        edgeCost = sortedEdges.minPrioirty();
+        min = sortedEdges.popTop();
+      }
+      if (closedSet.at(min.second))
+      {
+        break;
+      }
+      cost = edgeCost + cost;
+      nodes.at(min.first).insert(min.second);
+      nodes.insert(pair<int, set<int>>(min.second, set<int>()));
+      currentNode = min.second;
     }
-    result.first = result.first = +sortedEdges.minPrioirty();
-    auto min = sortedEdges.popTop();
-    source = min.first;
-    source.addDestination(min.second);
-
-    return result;
+    return pair<int, TreeNode>(cost, this->getNode(0, nodes));
   }
 
   template <class N>
@@ -450,6 +469,20 @@ private:
       - Value is the value of the edge
   */
   map<int, map<int, int>> edges_;
+
+  TreeNode getNode(int node, const map<int, set<int>> &nodeData) const
+  {
+    /// @brief Method to generate output tree
+    /// @param node Index of start node
+    /// @param nodeData map with destination vertices for each node
+    /// @return root TreeNode object of the tree
+    TreeNode root = TreeNode(node);
+    for (int idx : nodeData.at(node))
+    {
+      root.addDestination(this->getNode(idx, nodeData));
+    }
+    return root;
+  }
 };
 
 template <class T>
@@ -775,20 +808,20 @@ Graph<string> graph_generator(int nodecount, float density, unsigned distance_ra
 
 int main()
 {
-  // Graph with 50 nodes and 20% density
-  Graph<string> testgraph = graph_generator(50, 0.2, 10);
-  cout << testgraph << endl;
-  auto shortest_path = ShortestPath<string>(testgraph, 3, 33);
-  cout << shortest_path << endl;
-  shortest_path.setStart(34);
-  cout << shortest_path << endl;
+  // // Graph with 50 nodes and 20% density
+  // Graph<string> testgraph = graph_generator(50, 0.2, 10);
+  // cout << testgraph << endl;
+  // auto shortest_path = ShortestPath<string>(testgraph, 3, 33);
+  // cout << shortest_path << endl;
+  // shortest_path.setStart(34);
+  // cout << shortest_path << endl;
 
-  // Graph with 50 nodes and 40% density
-  testgraph = graph_generator(50, 0.4, 10);
-  cout << testgraph << endl;
-  shortest_path = ShortestPath<string>(testgraph, 1, 6);
-  shortest_path.setDestination(45);
-  cout << shortest_path << endl;
+  // // Graph with 50 nodes and 40% density
+  // testgraph = graph_generator(50, 0.4, 10);
+  // cout << testgraph << endl;
+  // shortest_path = ShortestPath<string>(testgraph, 1, 6);
+  // shortest_path.setDestination(45);
+  // cout << shortest_path << endl;
 
   // Graph from data file
   cout << "Graph from file ../data/SampleTestData_mst_data.txt" << endl;
