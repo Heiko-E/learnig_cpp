@@ -390,10 +390,10 @@ public:
     {
       int source = edge.first;
 
-      for (auto target : edge.second)
+      for (auto targetEdge : edge.second)
       {
-        int j = target.first;
-        int cost = target.second;
+        int target = targetEdge.first;
+        int cost = targetEdge.second;
         sortedEdges.insert(pair(source, target), cost);
       }
     }
