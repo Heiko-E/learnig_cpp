@@ -7,6 +7,7 @@ using namespace std;
 template <class T>
 class Graph
 /// @brief Data type for a graph.
+
 {
 public:
   Graph() : vertices_(vector<T>(0)) {}
@@ -339,8 +340,10 @@ ostream &operator<<(ostream &os, const PriorityQueue<T> &queue)
 }
 
 class SetElement
+/// @brief class to hold information about a node in a graph and path how it is reachable
+
 {
-  /// @brief class to hold information about a node in a graph and path how it is reachable
+
 public:
   SetElement() {}
 
@@ -423,10 +426,10 @@ ostream &operator<<(ostream &os, const SetElement &set)
 
 template <class T>
 class ShortestPath
-/*
- * implements the mechanics of Dijkstra’s algorithm
- */
+/// @brief implements the mechanics of Dijkstra’s algorithm
+
 {
+
 public:
   ShortestPath(const Graph<T> &g, int u, int w) : graph_(g),
                                                   start_(u),
@@ -621,11 +624,47 @@ Graph<string> graph_generator(int nodecount, float density, unsigned distance_ra
       if (i != j && ((static_cast<double>(rand()) / RAND_MAX) < density))
       {
         testgraph.addEdge(i, j);
-        testgraph.setEdgeValue(i, j, (rand() % (distance_range - 1)) + 1);
+        testgraph.setEdgeValue(i, j, rand() % distance_range);
       }
     }
   }
   return testgraph;
+}
+
+template <class T>
+class MinimumSpanningTree
+/// @brief class implementing a Kruskal minimum spanning tree algorithm
+
+{
+
+public:
+  MinimumSpanningTree(const MinimumSpanningTree<T> &tree) : graph_(tree.graph_) {}
+
+  MinimumSpanningTree(const Graph<T> &g) : graph_(g)
+  {
+    /// @param g the graph
+  }
+
+  MinimumSpanningTree() : graph_(Graph<T>()) {}
+
+  template <class N>
+  friend ostream &operator<<(ostream &os, const MinimumSpanningTree<N> &shortPath);
+
+private:
+  Graph<T> graph_;
+};
+
+template <class T>
+ostream &operator<<(ostream &os, const MinimumSpanningTree<T> &tree)
+{
+  /// @brief Output operator for Graph<T> class
+  /// @tparam T Type of the nodes of the graph
+  /// @param os output stream
+  /// @param tree the minimum spanning tree path to add to the output
+  /// @return output stream
+
+  os << endl;
+  return os;
 }
 
 int main()
@@ -633,15 +672,19 @@ int main()
   // Graph with 50 nodes and 20% density
   Graph<string> testgraph = graph_generator(50, 0.2, 10);
   cout << testgraph << endl;
-  ShortestPath<string> shortest_path = ShortestPath<string>(testgraph, 3, 33);
+  auto minTree = MinimumSpanningTree(testgraph);
+  cout << minTree << endl;
+  auto shortest_path = ShortestPath<string>(testgraph, 3, 33);
   cout << shortest_path << endl;
   shortest_path.setStart(34);
   cout << shortest_path << endl;
 
   // Graph with 50 nodes and 40% density
   testgraph = graph_generator(50, 0.4, 10);
-  shortest_path = ShortestPath<string>(testgraph, 1, 6);
   cout << testgraph << endl;
+  minTree = MinimumSpanningTree(testgraph);
+  cout << minTree << endl;
+  shortest_path = ShortestPath<string>(testgraph, 1, 6);
   shortest_path.setDestination(45);
   cout << shortest_path << endl;
   return 0;
