@@ -6,7 +6,7 @@
  *   inline any short function
  */
 
-#include <iostream>
+#include "sum.h"
 using namespace std;
 const int SIZE = 40;
 
