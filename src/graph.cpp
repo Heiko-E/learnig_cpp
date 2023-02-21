@@ -434,7 +434,7 @@ public:
     {
       closedSet.at(currentNode) = true;
       for (auto edge : this->edges_.at(currentNode))
-        sortedEdges.insert(pair(currentNode, edge.first),
+        sortedEdges.insert(pair<int, int>(currentNode, edge.first),
                            edge.second);
       int edgeCost = -1;
       pair<int, int> min;

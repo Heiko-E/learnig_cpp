@@ -5,8 +5,8 @@
  *   change array to vector<>
  *   inline any short function
  */
-
-#include "sum.h"
+#include "../include/sum.h"
+#include <iostream>
 using namespace std;
 const int SIZE = 40;
 
