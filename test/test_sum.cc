@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../include/sum.h"
+#include "sum.h"
 
 // Demonstrate some basic assertions.
 TEST(HelloTest, BasicAssertions)
